@@ -5,8 +5,11 @@ source /tmp/chroot-functions.sh
 ## START BUILD
 setup_pkgmgr
 
-echo "Bringing system up to date using profile specific use flags"
-run_merge -u @system
+echo "Bringing @world up to date using profile specific use flags"
+### re: @world over @system:
+###	package.use changes added in a portage_confdir aren't picked up
+###	unless those packages are in @system
+run_merge --update @world
 
 echo "Emerging packages using stage4 use flags"
 
