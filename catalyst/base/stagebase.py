@@ -882,7 +882,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
 				self.snapcache_lock.write_lock()
 			if os.path.exists(target_portdir):
 				log.info('%s', cleanup_msg)
-			clear_dir(target_portdir)
+			clear_dir(target_portdir, remove=True if unpack_info['mode'] == "squashfs" else False)
 
 			log.notice('Unpacking portage tree (this can take a long time) ...')
 			if not self.decompressor.extract(unpack_info):
