@@ -33,10 +33,10 @@ valid_config_file_values.extend([ "distcc", "envscript",
 
 # set our base defaults here to keep
 # them in one location.
-BASE_GENTOO_DIR = "/var/gentoo"
-REPODIR = BASE_GENTOO_DIR + "/repos"
-DISTDIR = BASE_GENTOO_DIR + "/distfiles"
-PKGDIR = BASE_GENTOO_DIR + "/packages"
+REPODIR = "/var/db/repos"
+CACHEDIR = "/var/cache"
+DISTDIR = CACHEDIR + "/distfiles"
+PKGDIR = CACHEDIR + "/binpkgs"
 MAINREPO = "gentoo"
 PORTDIR = REPODIR + "/" + MAINREPO
 
