@@ -34,7 +34,7 @@ if [ -n "${clst_update_seed}" ]; then
 		if [ -n "${clst_update_seed_command}" ]; then
 			clst_root_path=/ run_merge "--buildpkg=n ${clst_update_seed_command}"
 		else
-			clst_root_path=/ run_merge "--update --deep --newuse --complete-graph --rebuild-if-new-ver gcc"
+			clst_root_path=/ run_merge "--update --deep --newuse --complete-graph --rebuild-if-new-ver gcc --autounmask=n"
 		fi
 	elif [ "${clst_update_seed}" != "no" ]; then
 		echo "Invalid setting for update_seed: ${clst_update_seed}"
