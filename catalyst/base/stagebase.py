@@ -1178,6 +1178,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
 					myf.write(hostuseexpand + '="' +
 						' '.join(myuseexpandvars[hostuseexpand]) + '"\n')
 
+			myf.write('PORTDIR="/var/db/repos/gentoo"\n')
 			myf.write('DISTDIR="%s"\n' % self.settings['target_distdir'])
 			myf.write('PKGDIR="%s"\n' % self.settings['target_pkgdir'])
 			if setup:
