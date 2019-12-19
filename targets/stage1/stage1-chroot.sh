@@ -69,7 +69,7 @@ if [ -e ${clst_make_conf} ]; then
 	done
 fi
 
-run_merge "--oneshot ${clst_buildpkgs}"
+run_merge "--oneshot ${clst_buildpkgs} =mpfr-3*"
 
 # Why are we removing these? Don't we need them for final make.conf?
 for useexpand in ${clst_HOSTUSEEXPAND}; do
