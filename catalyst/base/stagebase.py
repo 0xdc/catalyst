@@ -1177,11 +1177,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
 				for hostuseexpand in myuseexpandvars:
 					myf.write(hostuseexpand + '="' +
 						' '.join(myuseexpandvars[hostuseexpand]) + '"\n')
-			# write out a shipable version
-			target_portdir = normpath(self.settings["repo_basedir"] + "/" +
-				self.settings["repo_name"])
 
-			myf.write('PORTDIR="%s"\n' % target_portdir)
 			myf.write('DISTDIR="%s"\n' % self.settings['target_distdir'])
 			myf.write('PKGDIR="%s"\n' % self.settings['target_pkgdir'])
 			if setup:
