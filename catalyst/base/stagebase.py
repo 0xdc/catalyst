@@ -870,6 +870,8 @@ class StageBase(TargetBase, ClearBase, GenBase):
 			if unpack_info['mode'] == "squashfs":
 				# target_portdir has already been normpath()'d
 				unpack_info['destination'] = target_portdir
+				unpack_info['other_options'] = ["-f",]
+				unpack_info['basedir'] = ''
 			else:
 				unpack_info['destination'] = normpath(
 					self.settings["chroot_path"] + self.settings["repo_basedir"])
