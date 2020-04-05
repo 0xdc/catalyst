@@ -41,6 +41,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
 			"cflags", "cxxflags", "fcflags", "fflags", "ldflags", "asflags",
 			"common_flags", "cbuild", "hostuse", "catalyst_use",
 			"distcc_hosts", "makeopts", "pkgcache_path", "kerncache_path",
+			"features",
 			"compression_mode", "decompression_mode"])
 
 		self.set_valid_build_kernel_vars(addlargs)
@@ -1172,6 +1173,13 @@ class StageBase(TargetBase, ClearBase, GenBase):
 				for hostuseexpand in myuseexpandvars:
 					myf.write(hostuseexpand + '="' +
 						' '.join(myuseexpandvars[hostuseexpand]) + '"\n')
+
+			myfeatures = "binpkg-multi-instance test".split()
+			if "features" in self.settings:
+				myfeatures = sorted(set(self.settings["features"]))
+			if myfeatures:
+				myf.write('FEATURES="' + ' '.join(myfeatures) + '"\n')
+
 			# write out a shipable version
 			target_portdir = normpath(self.settings["repo_basedir"] + "/" +
 				self.settings["repo_name"])
