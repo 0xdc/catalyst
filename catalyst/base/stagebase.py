@@ -858,6 +858,13 @@ class StageBase(TargetBase, ClearBase, GenBase):
 			cleanup_msg = "Cleaning up invalid snapshot cache at \n\t" + \
 				self.settings["snapshot_cache_path"] + \
 				" (this can take a long time)..."
+			if unpack_info['mode'] == "squashfs":
+				unpack_info['destination'] = self.settings['snapshot_cache_path']
+				unpack_info['other_options'] = ["-f",]
+				unpack_info['basedir'] = ''
+			else:
+				unpack_info['destination'] = normpath(
+					self.settings["chroot_path"] + self.settings["repo_basedir"])
 
 			if self.settings["snapshot_path_hash"] == snapshot_cache_hash:
 				log.info('Valid snapshot cache, skipping unpack of portage tree...')
