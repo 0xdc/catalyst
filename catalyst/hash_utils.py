@@ -10,8 +10,13 @@ from catalyst.support import CatalystError
 # Use HashMap.fields for the value legend
 # fields = ["func", "cmd", "args", "id"]
 HASH_DEFINITIONS = {
+	"blake2"   :["calc_hash",  "b2sum",     [ ], "BLAKE2"],
+	"sha1sum"  :["calc_hash",  "sha1sum",   [ ], "SHA1SUM"  ],
+	"sha224sum":["calc_hash",  "sha224sum", [ ], "SHA224SUM"],
+	"sha256sum":["calc_hash",  "sha256sum", [ ], "SHA256SUM"],
+	"sha384sum":["calc_hash",  "sha384sum", [ ], "SHA384SUM"],
+	"sha512sum":["calc_hash",  "sha512sum", [ ], "SHA512SUM"],
 	"adler32"  :["calc_hash2", "shash", ["-a", "ADLER32"], "ADLER32"],
-	"blake2"   :["calc_hash", "b2sum", [ ], "BLAKE2"],
 	"crc32"    :["calc_hash2", "shash", ["-a", "CRC32"], "CRC32"],
 	"crc32b"   :["calc_hash2", "shash", ["-a", "CRC32B"], "CRC32B"],
 	"gost"     :["calc_hash2", "shash", ["-a", "GOST"], "GOST"],
@@ -100,7 +105,7 @@ class HashMap(object):
 		output = source.communicate()
 		mylines = output[0].decode('ascii')
 		log.info('%s (%s) = %s', _hash.id, file_, mylines)
-		result = "# " + _hash.id + " (b2sum) HASH\n" + mylines
+		result = "# " + _hash.id + " (" + _hash.cmd + ") HASH\n" + mylines
 		return result
 
 
