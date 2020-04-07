@@ -324,8 +324,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
 		self.settings["target_profile"] = self.settings["profile"]
 
 	def set_target_subpath(self):
-		common = self.settings["rel_type"] + "/" + \
-				self.settings["target"] + "-" + self.settings["subarch"]
+		common = self.settings["target"] + "-" + self.settings["subarch"]
 		self.settings["target_subpath"] = \
 				common + \
 				"-" + self.settings["version_stamp"] + \
