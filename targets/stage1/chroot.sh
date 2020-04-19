@@ -31,10 +31,13 @@ clst_root_path=/ setup_pkgmgr "build"
 if [ -n "${clst_update_seed}" ]; then
 	if [ "${clst_update_seed}" == "yes" ]; then
 		echo "Updating seed stage..."
+		(for atom in 'virtual/perl*' 'dev-perl/*' 'dev-vcs/git' 'app-text/po4a' 'sys-apps/texinfo'; do
+			qlist -IC "$atom"
+		done) | xargs --no-run-if-empty emerge --oneshot --quiet --buildpkg --usepkg --binpkg-respect-use=y dev-lang/perl
 		if [ -n "${clst_update_seed_command}" ]; then
 			clst_root_path=/ run_merge "--buildpkg=n ${clst_update_seed_command}"
 		else
-			clst_root_path=/ run_merge "--update --deep --newuse --complete-graph --rebuild-if-new-ver gcc"
+			clst_root_path=/ run_merge "--update --deep --newuse --complete-graph --rebuild-if-new-ver --autounmask=n gcc"
 		fi
 	elif [ "${clst_update_seed}" != "no" ]; then
 		echo "Invalid setting for update_seed: ${clst_update_seed}"
