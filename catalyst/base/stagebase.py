@@ -858,7 +858,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
         )
 
         target_portdir = normpath(self.settings["chroot_path"] +
-                                  self.settings["repo_basedir"] + "/" + self.settings["repo_name"])
+                                  self.settings["repo_basedir"])
         log.info('%s', self.settings['chroot_path'])
         log.info('unpack_snapshot(), target_portdir = %s', target_portdir)
         if "snapcache" in self.settings["options"]:
@@ -873,6 +873,16 @@ class StageBase(TargetBase, ClearBase, GenBase):
                 self.settings["snapshot_cache_path"] + \
                 " (this can take a long time)..."
 
+            if unpack_info['mode'] == "squashfs":
+                unpack_info['destination'] = normpath(
+                    self.settings['snapshot_cache_path']
+                    + "/" + self.settings["repo_name"])
+                unpack_info['other_options'] = ["-f",]
+                unpack_info['basedir'] = ''
+            else:
+                unpack_info['destination'] = normpath(
+                    self.settings['snapshot_cache_path'])
+
             if self.settings["snapshot_path_hash"] == snapshot_cache_hash:
                 log.info(
                     'Valid snapshot cache, skipping unpack of portage tree...')
@@ -882,15 +892,11 @@ class StageBase(TargetBase, ClearBase, GenBase):
                 'Cleaning up existing portage tree (this can take a long time)...'
             unpack_info['mode'] = self.decompressor.determine_mode(
                 unpack_info['source'])
+            unpack_info['destination'] = target_portdir
 
             if unpack_info['mode'] == "squashfs":
-                # target_portdir has already been normpath()'d
-                unpack_info['destination'] = target_portdir
                 unpack_info['other_options'] = ["-f",]
                 unpack_info['basedir'] = ''
-            else:
-                unpack_info['destination'] = normpath(
-                    self.settings["chroot_path"] + self.settings["repo_basedir"])
 
             if "autoresume" in self.settings["options"] \
                     and os.path.exists(target_portdir) \
