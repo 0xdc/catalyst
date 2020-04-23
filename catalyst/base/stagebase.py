@@ -869,10 +869,15 @@ class StageBase(TargetBase, ClearBase, GenBase):
         else:
             cleanup_msg = \
                 'Cleaning up existing portage tree (this can take a long time)...'
-            unpack_info['destination'] = normpath(
-                self.settings["chroot_path"] + self.settings["repo_basedir"])
             unpack_info['mode'] = self.decompressor.determine_mode(
                 unpack_info['source'])
+
+            if unpack_info['mode'] == "squashfs":
+                # target_portdir has already been normpath()'d
+                unpack_info['destination'] = target_portdir
+            else:
+                unpack_info['destination'] = normpath(
+                    self.settings["chroot_path"] + self.settings["repo_basedir"])
 
             if "autoresume" in self.settings["options"] \
                     and os.path.exists(target_portdir) \
