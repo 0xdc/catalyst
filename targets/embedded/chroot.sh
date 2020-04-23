@@ -8,10 +8,11 @@ export clst_root_path="/"
 
 setup_pkgmgr
 
-echo "Installing dependencies into ${DESTROOT}..."
-run_merge -o "${clst_embedded_packages}"
+echo "Installing dependencies into ${clst_root_path}..."
+run_merge --update --onlydeps "${clst_embedded_packages}"
 
 export clst_root_path="${DESTROOT}"
 export INSTALL_MASK="${clst_install_mask}"
 
-run_merge -1 -O "${clst_embedded_packages}"
+echo "Installing packages into ${clst_root_path}..."
+LC_CTYPE=C.utf8 run_merge --oneshot "${clst_embedded_packages}"
