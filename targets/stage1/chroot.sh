@@ -32,7 +32,7 @@ if [ -n "${clst_update_seed}" ]; then
 			qlist -IC "$atom"
 		done)
 		if [ -n "${clst_update_seed_command}" ]; then
-			clst_root_path=/ run_merge "--buildpkg=n ${clst_update_seed_command}"
+			clst_root_path=/ run_merge "${clst_update_seed_command}"
 		else
 			clst_root_path=/ run_merge "--update --deep --newuse --complete-graph --rebuild-if-new-ver --autounmask=n gcc"
 		fi
