@@ -48,6 +48,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
             "cflags",
             "common_flags",
             "compression_mode",
+            "compressor_options",
             "cxxflags",
             "decompressor_search_order",
             "distcc_hosts",
@@ -678,7 +679,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
             source=self.settings["source_path"],
             destination=self.settings["chroot_path"],
             arch=self.settings["compressor_arch"],
-            other_options=self.settings["compressor_options"],
+            other_options=self.settings["decomp_opt"],
         )
 
         display_msg = (
