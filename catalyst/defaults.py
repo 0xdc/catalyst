@@ -30,7 +30,7 @@ confdefaults = {
     "compression_mode": 'lbzip2',
     "compressor_arch": None,
     "compressor_options": XATTRS_OPTIONS['linux'],
-    "decomp_opt": DECOMPRESSOR_PROGRAM_OPTIONS['linux'],
+    "decomp_opt": ' '.join(XATTRS_OPTIONS['linux']),
     "decompressor_search_order": DECOMPRESSOR_SEARCH_ORDER,
     "distdir": portage.settings['DISTDIR'],
     "icecream": "/var/cache/icecream",
