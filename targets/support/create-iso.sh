@@ -111,6 +111,15 @@ run_mkisofs() {
 	mkisofs "${@}" || die "Cannot make ISO image"
 }
 
+run_isohybrid() {
+	for root in "" "${clst_chroot_path}"; do
+		if test -x "${root}/usr/bin/isohybrid"; then
+			"${root}/usr/bin/isohybrid" "$@"
+			return
+		fi
+	done
+}
+
 # Here we actually create the ISO images for each architecture
 case ${clst_hostarch} in
 	alpha)
@@ -244,11 +253,11 @@ case ${clst_hostarch} in
 			  echo '** Found GRUB2 EFI bootloader'
 				echo 'Creating ISO using both ISOLINUX and EFI bootloader'
 				run_mkisofs -J -R -l -V "${clst_iso_volume_id}" -o "${1}" -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -eltorito-platform efi -b gentoo.efimg -no-emul-boot -z "${clst_target_path}"/
-				isohybrid --uefi "${1}"
+				run_isohybrid --uefi "${1}"
 		  else
 			  echo 'Creating ISO using ISOLINUX bootloader'
 			  run_mkisofs -J -R -l -V "${clst_iso_volume_id}" -o "${1}" -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table "${clst_target_path}"/
-			  isohybrid "${1}"
+			  run_isohybrid "${1}"
 		  fi
 		elif [ -e "${clst_target_path}/gentoo.efimg" ]; then
 			echo '** Found GRUB2 EFI bootloader'

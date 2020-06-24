@@ -64,30 +64,32 @@ create_bootloader() {
 	echo "Enter to boot; F1 for kernels  F2 for options." >> isolinux/boot.msg
 	echo "Press any key in the next 15 seconds or we'll try to boot from disk." >> isolinux/boot.msg
   #install isolinux files
-  if [ -f /usr/share/syslinux/isolinux.bin ]; then
-    cp /usr/share/syslinux/isolinux.bin isolinux/
-    #isolinux support files
-    for i in libcom32.c32 libutil.c32 ldlinux.c32 reboot.c32 vesamenu.c32; do
-      if [ -f "/usr/share/syslinux/${i}" ]; then
-        cp "/usr/share/syslinux/${i}" isolinux/
-      fi
-    done
-    #isolinux hardware detection toolkit, useful for system info and debugging
-    if [ -f "/usr/share/syslinux/hdt.c32" ]; then
-      cp /usr/share/syslinux/hdt.c32 isolinux/
-      if [ -f "/usr/share/misc/pci.ids" ]; then
-        cp /usr/share/misc/pci.ids isolinux/
-      fi
-    fi
-    #memtest goes under isolinux since it doesn't work for uefi right now
-    if [ -f /usr/share/memtest86+/memtest ]; then
-      cp /usr/share/memtest86+/memtest.bin isolinux/memtest86
-    else
-      echo "Missing /usr/share/memtest86+/memtest.bin, this livecd will not have memtest86+ support.  Enable USE=system-bootloader on catalyst to pull in the correct deps"
-    fi
-  else
-    echo "Missing /usr/share/syslinux/isolinux.bin, this livecd will not bios boot.  Enable USE=system-bootloader on catalyst to pull in the correct deps"
-  fi
+  for root in "" "${clst_chroot_path}"; do
+	  if [ -f "${root}"/usr/share/syslinux/isolinux.bin ]; then
+	    cp "${root}"/usr/share/syslinux/isolinux.bin isolinux/
+	    #isolinux support files
+	    for i in libcom32.c32 libutil.c32 ldlinux.c32 reboot.c32 vesamenu.c32; do
+	      if [ -f "${root}/usr/share/syslinux/${i}" ]; then
+		cp "${root}/usr/share/syslinux/${i}" isolinux/
+	      fi
+	    done
+	    #isolinux hardware detection toolkit, useful for system info and debugging
+	    if [ -f "${root}/usr/share/syslinux/hdt.c32" ]; then
+	      cp "${root}"/usr/share/syslinux/hdt.c32 isolinux/
+	      if [ -f "${root}/usr/share/misc/pci.ids" ]; then
+		cp "${root}"/usr/share/misc/pci.ids isolinux/
+	      fi
+	    fi
+	    #memtest goes under isolinux since it doesn't work for uefi right now
+	    if [ -f "${root}"/usr/share/memtest86+/memtest ]; then
+	      cp "${root}"/usr/share/memtest86+/memtest.bin isolinux/memtest86
+	    else
+	      echo "Missing /usr/share/memtest86+/memtest.bin, this livecd will not have memtest86+ support.  Enable USE=system-bootloader on catalyst to pull in the correct deps"
+	    fi
+	  else
+	    echo "Missing /usr/share/syslinux/isolinux.bin, this livecd will not bios boot.  Enable USE=system-bootloader on catalyst to pull in the correct deps"
+	  fi
+  done
 
   #create grub-stub.cfg for embedding in grub-mkstandalone
   echo "insmod part_gpt" > grub-stub.cfg
@@ -97,16 +99,24 @@ create_bootloader() {
 
   # some 64 bit machines have 32 bit UEFI, and you might want to boot 32 bit on a 64 bit machine, so we take the safest path and include both
   # set up 32 bit uefi
-  ${grubmkstndaln} /boot/grub/grub.cfg=./grub-stub.cfg --compress=xz -O i386-efi -o ./boot/EFI/BOOT/grubia32.efi --themes= || die "Failed to make grubia32.efi"
-  #secure boot shim
-  cp /usr/share/shim/BOOTIA32.EFI boot/EFI/BOOT/
-  cp /usr/share/shim/mmia32.efi boot/EFI/BOOT/
+	for root in "" "${clst_chroot_path}"; do
+		if test -d "${root}/usr/lib/grub/i386-efi"; then
+			${grubmkstndaln} /boot/grub/grub.cfg=./grub-stub.cfg --compress=xz -O i386-efi -o ./boot/EFI/BOOT/grubia32.efi --themes= || die "Failed to make grubia32.efi"
+			if test -f "${root}/usr/share/shim/BOOTIA32.EFI"; then
+				#secure boot shim
+				cp "${root}"/usr/share/shim/BOOTIA32.EFI boot/EFI/BOOT/
+				cp "${root}"/usr/share/shim/mmia32.efi boot/EFI/BOOT/
+			fi
+		fi
 
   #set up 64 bit uefi
   ${grubmkstndaln} /boot/grub/grub.cfg=./grub-stub.cfg --compress=xz -O x86_64-efi -o ./boot/EFI/BOOT/grubx64.efi --themes= || die "Failed to make grubx64.efi"
-  #secure boot shim
-  cp /usr/share/shim/BOOTX64.EFI boot/EFI/BOOT/
-  cp /usr/share/shim/mmx64.efi boot/EFI/BOOT/
+	if test -f "${root}/usr/share/shim/BOOTIA32.EFI"; then
+		#secure boot shim
+		cp "${root}"/usr/share/shim/BOOTX64.EFI boot/EFI/BOOT/
+		cp "${root}"/usr/share/shim/mmx64.efi boot/EFI/BOOT/
+	fi
+	done
 
   rm grub-stub.cfg || echo "Failed to remove grub-stub.cfg, but this hurts nothing"
   popd || die "Failed to leave livecd dir"
