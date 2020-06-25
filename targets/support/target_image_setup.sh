@@ -7,8 +7,13 @@ mkdir -p "${1}"
 echo "Creating ${clst_fstype} filesystem"
 case ${clst_fstype} in
 	squashfs)
-		gensquashfs -D "${clst_destpath}" -q ${clst_fsops} "${1}/image.squashfs" \
-			|| die "Failed to create squashfs filesystem"
+		if command -v mksquashfs; then
+			mksquashfs "${clst_destpath}" "$1/image.squashfs" ${clst_fsops} -noappend \
+				|| die "mksquashfs failed"
+		else
+			gensquashfs -D "${clst_destpath}" -q ${clst_fsops} "${1}/image.squashfs" \
+				|| die "Failed to create squashfs filesystem"
+		fi
 	;;
 	jffs2)
 		mkfs.jffs2 --root="${clst_destpath}" --output="${1}/image.jffs" "${clst_fsops}" \
