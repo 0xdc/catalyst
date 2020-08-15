@@ -111,6 +111,15 @@ run_mkisofs() {
 	mkisofs "${@}" || die "Cannot make ISO image"
 }
 
+run_isohybrid() {
+	for isohybrid in "isohybrid" "${clst_chroot_path}/usr/bin/isohybrid"; do
+		if test -x "$(command -v $isohybrid)"; then
+			command $isohybrid "$@"
+			return
+		fi
+	done
+}
+
 # Here we actually create the ISO images for each architecture
 case ${clst_hostarch} in
 	alpha)
