@@ -18,7 +18,7 @@ case ${clst_hostarch} in
                 cdmaker="grub-mkrescue"
                 cdmakerpkg="dev-libs/libisoburn and sys-boot/grub:2"
                 ;;
-	ia64)
+	amd64|ia64|x86)
 		cdmaker="grub-mkrescue"
 		cdmakerpkg="sys-fs/mtools, dev-libs/libisoburn, and sys-boot/grub:2"
 		;;
