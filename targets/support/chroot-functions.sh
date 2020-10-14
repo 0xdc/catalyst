@@ -131,7 +131,7 @@ setup_emerge_opts() {
 		bootstrap_opts+=(-f)
 	fi
 
-	if [ -n "${clst_PKGCACHE}" ] && [ -z "${clst_update_seed}" -o "${clst_update_seed}" = "no" ]
+	if [ -n "${clst_PKGCACHE}" ]
 	then
 		emerge_opts+=(--usepkg --buildpkg --binpkg-respect-use=y --newuse)
 		bootstrap_opts+=(-r)
