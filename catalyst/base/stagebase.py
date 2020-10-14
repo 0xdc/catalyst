@@ -1415,7 +1415,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
         else:
             log.notice('Setting up filesystems per filesystem type')
             cmd([self.settings['controller_file'], 'target_image_setup',
-                 self.settings['target_path']], env=self.env)
+                 self.settings['target_path'].rstrip("/")], env=self.env)
             self.resume.enable("target_setup")
 
     def setup_overlay(self):
