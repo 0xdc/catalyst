@@ -192,6 +192,7 @@ case ${clst_hostarch} in
 		isoroot_checksum
 
 		case ${clst_hostarch} in
+		amd64|x86) extra_opts="-joliet" ;;
 		sparc*) extra_opts="--sparc-boot" ;;
 		esac
 
