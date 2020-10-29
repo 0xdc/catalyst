@@ -16,41 +16,10 @@ class livecd_stage2(StageBase):
         "boot/kernel",
     ])
     valid_values = required_values | frozenset([
-        "livecd/bootargs",
-        "livecd/cdtar",
-        "livecd/depclean",
-        "livecd/empty",
-        "livecd/fsops",
-        "livecd/fsscript",
-        "livecd/fstype",
         "livecd/gk_mainargs",
-        "livecd/iso",
         "livecd/linuxrc",
-        "livecd/modblacklist",
-        "livecd/motd",
-        "livecd/overlay",
-        "livecd/rcadd",
-        "livecd/rcdel",
-        "livecd/readme",
-        "livecd/rm",
-        "livecd/root_overlay",
-        "livecd/type",
-        "livecd/unmerge",
-        "livecd/users",
-        "livecd/verify",
-        "livecd/volid",
-        "livecd/xdm",
-        "livecd/xinitrc",
-        "livecd/xsession",
         "portage_overlay",
     ])
-
-    def __init__(self, spec, addlargs):
-        StageBase.__init__(self, spec, addlargs)
-        if "livecd/type" not in self.settings:
-            self.settings["livecd/type"] = "generic-livecd"
-
-        file_locate(self.settings, ["cdtar", "controller_file"])
 
     def set_spec_prefix(self):
         self.settings["spec_prefix"] = "livecd"
@@ -85,6 +54,10 @@ class livecd_stage2(StageBase):
                                     "/etc/modprobe.d/blacklist.conf.",
                                     print_traceback=True)
 
+    def set_stage_path(self):
+        self.set_target_path()
+        self.settings['stage_path'] = self.settings['target_path']
+
     def set_action_sequence(self):
         self.prepare_sequence.extend([
             "unpack",
@@ -96,26 +69,11 @@ class livecd_stage2(StageBase):
             "bind",
             "chroot_setup",
             "setup_environment",
-            "run_local",
             "build_kernel"
         ])
         if "fetch" not in self.settings["options"]:
             self.build_sequence.extend([
                 "bootloader",
-                "preclean",
-                "livecd_update",
-                "root_overlay",
-                "fsscript",
-                "rcupdate",
-                "unmerge",
+                "unbind",
             ])
-            self.finish_sequence.extend([
-                "remove",
-                "empty",
-                "clean",
-                "target_setup",
-                "setup_overlay",
-                "create_iso",
-            ])
-        self.finish_sequence.append("clear_autoresume")
-        self.finish_sequence.append("remove_chroot")
+        self.set_completion_action_sequences()
