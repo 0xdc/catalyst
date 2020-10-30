@@ -34,7 +34,6 @@ def main(argv):
 		)
 		conf.flush()
 		argv = [
-			'--config', os.path.join(source_root, 'etc', 'catalyst.conf'),
 			'--config', conf.name,
 		] + argv
 
