@@ -118,3 +118,4 @@ class livecd_stage2(StageBase):
                 "create_iso",
             ])
         self.finish_sequence.append("clear_autoresume")
+        self.finish_sequence.append("remove_chroot")
