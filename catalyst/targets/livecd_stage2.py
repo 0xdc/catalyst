@@ -74,6 +74,5 @@ class livecd_stage2(StageBase):
         if "fetch" not in self.settings["options"]:
             self.build_sequence.extend([
                 "bootloader",
-                "unbind",
             ])
         self.set_completion_action_sequences()
