@@ -46,7 +46,6 @@ class livecd_stage1(StageBase):
             "fsscript",
             "unmerge",
             "bootloader",
-            "unbind",
             "remove",
             "empty",
             "clean",
