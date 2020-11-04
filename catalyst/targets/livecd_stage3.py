@@ -35,12 +35,14 @@ class livecd_stage3(livecd_stage1):
     ])
 
     def set_action_sequence(self):
-        self.finish_sequence.extend([
+        self.build_sequence.extend([
             "unpack",
             "bind",
             "setup_environment",
             "root_overlay",
             "bootloader",
+        ])
+        self.finish_sequence.extend([
             "remove",
             "empty",
             "clean",
