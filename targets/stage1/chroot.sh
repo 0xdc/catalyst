@@ -35,7 +35,7 @@ sed -i -e 's:BINPKG_COMPRESS="bzip2":BINPKG_COMPRESS="zstd":' \
 if [ -n "${clst_update_seed}" ]; then
 	if [ "${clst_update_seed}" == "yes" ]; then
 		echo "Updating seed stage..."
-		clst_root_path=/ run_merge --oneshot dev-lang/perl $(for atom in 'virtual/perl*' 'dev-perl/*' 'dev-vcs/git' 'app-text/po4a' 'sys-apps/texinfo'; do
+		ROOT=/ run_merge --oneshot dev-lang/perl $(for atom in 'virtual/perl*' 'dev-perl/*' 'dev-vcs/git' 'app-text/po4a' 'sys-apps/texinfo'; do
 			qlist -IC "$atom"
 		done)
 		if [ -n "${clst_update_seed_command}" ]; then
