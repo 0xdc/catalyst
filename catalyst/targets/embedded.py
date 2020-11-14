@@ -63,6 +63,7 @@ class embedded(StageBase):
             "clean",
             "capture",
             "clear_autoresume",
+            "remove_chroot",
         ])
 
     def set_stage_path(self):
