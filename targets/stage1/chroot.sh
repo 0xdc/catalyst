@@ -32,10 +32,13 @@ FEATURES="${FEATURES} nodoc noman noinfo"
 if [ -n "${clst_update_seed}" ]; then
 	if [ "${clst_update_seed}" == "yes" ]; then
 		echo "Updating seed stage..."
+		ROOT=/ run_merge --oneshot dev-lang/perl $(for atom in 'virtual/perl*' 'dev-perl/*' 'dev-vcs/git' 'app-text/po4a' 'sys-apps/texinfo'; do
+			qlist -IC "$atom"
+		done)
 		if [ -n "${clst_update_seed_command}" ]; then
 			ROOT=/ run_merge --buildpkg=n "${clst_update_seed_command}"
 		else
-			ROOT=/ run_merge --update --deep --newuse --complete-graph --rebuild-if-new-ver gcc
+			ROOT=/ run_merge --update --deep --newuse --complete-graph --rebuild-if-new-ver --autounmask=n gcc
 		fi
 	elif [ "${clst_update_seed}" != "no" ]; then
 		echo "Invalid setting for update_seed: ${clst_update_seed}"
