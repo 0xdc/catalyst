@@ -62,8 +62,8 @@ class embedded(StageBase):
             "empty",
             "clean",
             "capture",
-            "clear_autoresume",
         ])
+        self.set_completion_action_sequences()
 
     def set_root_path(self):
         self.settings["root_path"] = normpath("/tmp/mergeroot")

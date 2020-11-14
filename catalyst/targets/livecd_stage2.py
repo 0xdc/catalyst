@@ -117,4 +117,4 @@ class livecd_stage2(StageBase):
                 "setup_overlay",
                 "create_iso",
             ])
-        self.finish_sequence.append("clear_autoresume")
+        self.set_completion_action_sequences()
