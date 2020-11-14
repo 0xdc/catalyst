@@ -435,6 +435,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
 
     def set_cleanables(self):
         self.settings['cleanables'] = [
+            "/etc/machine-id",
             "/etc/resolv.conf",
             "/var/tmp/*",
             "/tmp/*",
