@@ -36,9 +36,9 @@ if [ -n "${clst_update_seed}" ]; then
 			qlist -IC "$atom"
 		done)
 		if [ -n "${clst_update_seed_command}" ]; then
-			ROOT=/ run_merge --buildpkg=n "${clst_update_seed_command}"
+			ROOT=/ run_merge "${clst_update_seed_command}"
 		else
-			ROOT=/ run_merge --update --deep --newuse --complete-graph --rebuild-if-new-ver --autounmask=n gcc
+			ROOT=/ run_merge --update --deep --changed-use --complete-graph --rebuild-if-new-ver --autounmask=n gcc
 		fi
 	elif [ "${clst_update_seed}" != "no" ]; then
 		echo "Invalid setting for update_seed: ${clst_update_seed}"
