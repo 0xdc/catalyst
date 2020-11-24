@@ -16,6 +16,7 @@ class livecd_stage1(StageBase):
         "livecd/packages",
     ])
     valid_values = required_values | frozenset([
+        "livecd/depclean",
         "livecd/use",
     ])
 
@@ -34,6 +35,7 @@ class livecd_stage1(StageBase):
             "chroot_setup",
             "setup_environment",
             "build_packages",
+            "unmerge",
         ])
         self.finish_sequence.extend([
             "clean",
