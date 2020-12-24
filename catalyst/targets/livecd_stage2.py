@@ -16,6 +16,7 @@ class livecd_stage2(StageBase):
         "boot/kernel",
     ])
     valid_values = required_values | frozenset([
+        "livecd/bootargs",
         "livecd/gk_mainargs",
         "livecd/linuxrc",
         "portage_overlay",
