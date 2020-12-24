@@ -21,7 +21,6 @@ class livecd_stage3(livecd_stage1):
         "livecd/cdtar",
     ])
     valid_values = required_values | frozenset([
-        "livecd/bootargs",
         "livecd/empty",
         "livecd/fsscript",
         "livecd/fstype",
