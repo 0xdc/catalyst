@@ -82,16 +82,6 @@ setup_features() {
 		sed -i '/USE="${USE} -avahi -gtk -gnome"/d' ${clst_make_conf}
 		mkdir -p /etc/distcc
 		echo "${clst_distcc_hosts}" > /etc/distcc/hosts
-
-		# This sets up automatic cross-distcc-fu according to
-		# https://wiki.gentoo.org/wiki/Distcc/Cross-Compiling
-		CHOST=$(portageq envvar CHOST)
-		LIBDIR=$(get_libdir)
-		cd /usr/${LIBDIR}/distcc/bin
-		rm cc gcc g++ c++ 2>/dev/null
-		echo -e '#!/bin/bash\nexec /usr/'${LIBDIR}'/distcc/bin/'${CHOST}'-g${0:$[-2]} "$@"' > ${CHOST}-wrapper
-		chmod a+x /usr/${LIBDIR}/distcc/bin/${CHOST}-wrapper
-		for i in cc gcc g++ c++; do ln -s ${CHOST}-wrapper ${i}; done
 	fi
 
 	if [ -n "${clst_ICECREAM}" ]
@@ -174,13 +164,7 @@ setup_gcc(){
 }
 
 cleanup_distcc() {
-	LIBDIR=$(get_libdir)
 	rm -rf /etc/distcc/hosts
-	for i in cc gcc c++ g++; do
-		rm -f /usr/${LIBDIR}/distcc/bin/${i}
-		ln -s /usr/bin/distcc /usr/${LIBDIR}/distcc/bin/${i}
-	done
-	rm -f /usr/${LIBDIR}/distcc/bin/*-wrapper
 }
 
 cleanup_icecream() {
