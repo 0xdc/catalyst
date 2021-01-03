@@ -86,12 +86,14 @@ setup_features() {
 		# This sets up automatic cross-distcc-fu according to
 		# https://wiki.gentoo.org/wiki/Distcc/Cross-Compiling
 		CHOST=$(portageq envvar CHOST)
-		LIBDIR=$(get_libdir)
-		cd /usr/${LIBDIR}/distcc/bin
-		rm cc gcc g++ c++ 2>/dev/null
-		echo -e '#!/bin/bash\nexec /usr/'${LIBDIR}'/distcc/bin/'${CHOST}'-g${0:$[-2]} "$@"' > ${CHOST}-wrapper
-		chmod a+x /usr/${LIBDIR}/distcc/bin/${CHOST}-wrapper
-		for i in cc gcc g++ c++; do ln -s ${CHOST}-wrapper ${i}; done
+		for LIBDIR in lib $(get_libdir); do
+			test -d /usr/${LIBDIR}/distcc/bin || continue
+			cd /usr/${LIBDIR}/distcc/bin
+			rm cc gcc g++ c++ 2>/dev/null
+			echo -e '#!/bin/bash\nexec /usr/'${LIBDIR}'/distcc/bin/'${CHOST}'-g${0:$[-2]} "$@"' > ${CHOST}-wrapper
+			chmod a+x /usr/${LIBDIR}/distcc/bin/${CHOST}-wrapper
+			for i in cc gcc g++ c++; do ln -s ${CHOST}-wrapper ${i}; done
+		done
 	fi
 
 	if [ -n "${clst_ICECREAM}" ]
@@ -174,13 +176,15 @@ setup_gcc(){
 }
 
 cleanup_distcc() {
-	LIBDIR=$(get_libdir)
-	rm -rf /etc/distcc/hosts
-	for i in cc gcc c++ g++; do
-		rm -f /usr/${LIBDIR}/distcc/bin/${i}
-		ln -s /usr/bin/distcc /usr/${LIBDIR}/distcc/bin/${i}
+	rm -f /etc/distcc/hosts
+	for LIBDIR in lib $(get_libdir); do
+		test -d /usr/${LIBDIR}/distcc/bin || continue
+		for i in cc gcc c++ g++; do
+			rm -f /usr/${LIBDIR}/distcc/bin/${i}
+			ln -s /usr/bin/distcc /usr/${LIBDIR}/distcc/bin/${i}
+		done
+		rm -f /usr/${LIBDIR}/distcc/bin/*-wrapper
 	done
-	rm -f /usr/${LIBDIR}/distcc/bin/*-wrapper
 }
 
 cleanup_icecream() {
