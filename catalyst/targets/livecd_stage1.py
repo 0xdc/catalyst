@@ -4,7 +4,6 @@ LiveCD stage1 target
 # NOTE: That^^ docstring has influence catalyst-spec(5) man page generation.
 
 from catalyst.support import normpath
-
 from catalyst.base.stagebase import StageBase
 
 
@@ -13,10 +12,15 @@ class livecd_stage1(StageBase):
     Builder class for LiveCD stage1.
     """
     required_values = frozenset([
-        "livecd/packages",
     ])
     valid_values = required_values | frozenset([
         "livecd/depclean",
+        "livecd/empty",
+        "livecd/fsscript",
+        "livecd/packages",
+        "livecd/rm",
+        "livecd/root_overlay",
+        "livecd/unmerge",
         "livecd/use",
     ])
 
