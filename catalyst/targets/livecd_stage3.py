@@ -35,9 +35,6 @@ class livecd_stage3(livecd_stage1):
 
     def set_action_sequence(self):
         self.build_sequence.extend([
-            self.unpack,
-            self.bind,
-            self.setup_environment,
             self.root_overlay,
             self.bootloader,
         ])
