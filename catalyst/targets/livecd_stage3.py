@@ -35,21 +35,21 @@ class livecd_stage3(livecd_stage1):
 
     def set_action_sequence(self):
         self.build_sequence.extend([
-            "unpack",
-            "bind",
-            "setup_environment",
-            "root_overlay",
-            "bootloader",
+            self.unpack,
+            self.bind,
+            self.setup_environment,
+            self.root_overlay,
+            self.bootloader,
         ])
         self.finish_sequence.extend([
-            "remove",
-            "empty",
-            "clean",
-            "fsscript",
-            "target_setup",
-            "create_iso",
-            "clear_autoresume",
-            "remove_chroot",
+            self.remove,
+            self.empty,
+            self.clean,
+            self.fsscript,
+            self.target_setup,
+            self.create_iso,
+            self,clear_autoresume,
+            self,remove_chroot,
         ])
 
     def set_target_path(self):
