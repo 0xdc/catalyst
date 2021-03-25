@@ -59,5 +59,9 @@ class livecd_stage3(livecd_stage1):
         and additionally creates a staging directory for assembling
         the final components needed to produce the iso image.
         '''
-        super(livecd_stage1, self).set_target_path()
+        super(livecd_stage3, self).set_target_path()
         clear_dir(self.settings['target_path'])
+
+    def clean(self):
+        self.settings['options'].append("sticky-config")
+        super(livecd_stage3, self).clean()
