@@ -19,5 +19,10 @@ case $1 in
 		exec_in_chroot ${clst_shdir}/support/unmerge.sh
 		[ "${clst_livecd_depclean}" != "no" ] && exec_in_chroot ${clst_shdir}/support/depclean.sh
 	;;
+
+	fsscript)
+		exec_in_chroot ${clst_fsscript}
+		;;
+
 esac
 exit $?
