@@ -22,5 +22,5 @@ if [[ ${clst_hostarch} == hppa ]]; then
 	[[ $num64 > 1 ]] && die "Only one 64-bit kernel can be configured"
 fi
 
-run_merge --oneshot sys-kernel/genkernel
+run_merge --oneshot --update sys-devel/bc sys-devel/bison sys-devel/flex sys-kernel/genkernel virtual/libelf
 install -d /tmp/kerncache
