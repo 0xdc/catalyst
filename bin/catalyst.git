@@ -27,9 +27,8 @@ def main(argv):
 	with tempfile.NamedTemporaryFile(prefix='catalyst.conf.') as conf:
 		# Set up a config file with paths to the local tree.
 		conf.write(
-			('sharedir=%(source_root)s\n'
-			 'shdir=%(source_root)s/targets\n'
-			 'envscript=%(source_root)s/etc/catalystrc\n'
+			('sharedir="%(source_root)s"\n'
+			 'envscript="%(source_root)s/etc/catalystrc"\n'
 			 % {'source_root': source_root}).encode('utf8')
 		)
 		conf.flush()
