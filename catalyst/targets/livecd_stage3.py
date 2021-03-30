@@ -17,6 +17,7 @@ class livecd_stage3(livecd_stage1):
     Requires a cached kernel name and cdtar
     """
     required_values = frozenset([
+        # profile is required (due to __init__), but not used
         "boot/kernel",
         "livecd/cdtar",
     ])
@@ -34,10 +35,21 @@ class livecd_stage3(livecd_stage1):
     ])
 
     def set_action_sequence(self):
-        self.build_sequence.extend([
-            self.root_overlay,
-            self.bootloader,
-        ])
+        self.prepare_sequence = [
+                self.unpack,
+                # do not need:
+                #   config_profile_link
+                #   setup_confdir
+                #   process_repos
+        ]
+        self.build_sequence = [
+                self.bind,
+                # chroot_setup
+                self.setup_environment,
+                # enter_chroot
+                self.root_overlay,
+                self.bootloader,
+        ]
         self.finish_sequence.extend([
             self.remove,
             self.empty,
