@@ -7,4 +7,4 @@ run_merge --update --deep --newuse @world
 
 echo "Emerging packages using stage4 use flags"
 
-run_merge "${clst_packages}"
+LC_CTYPE=C.utf8 run_merge "${clst_packages}"
