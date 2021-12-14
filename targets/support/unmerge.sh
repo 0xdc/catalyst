@@ -2,6 +2,6 @@
 
 source /tmp/chroot-functions.sh
 
-run_merge -C ${clst_packages}
+test "${clst_packages}" && run_merge -C ${clst_packages}
 
 exit 0
