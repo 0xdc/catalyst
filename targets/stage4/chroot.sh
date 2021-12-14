@@ -2,8 +2,8 @@
 
 source /tmp/chroot-functions.sh
 
-echo "Bringing system up to date using profile specific use flags"
-run_merge -u @system
+echo "Bringing world up to date using profile specific use flags"
+run_merge --update --deep --newuse @world
 
 echo "Emerging packages using stage4 use flags"
 
