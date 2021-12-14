@@ -346,7 +346,7 @@ def _main(parser, opts):
 
     if mycmdline:
         try:
-            cmdline = catalyst.config.SpecParser()
+            cmdline = catalyst.config.ParserBase()
             cmdline.parse_lines(mycmdline)
             addlargs.update(cmdline.get_values())
         except CatalystError:
