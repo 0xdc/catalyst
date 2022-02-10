@@ -86,6 +86,8 @@ case ${clst_hostarch} in
 		iacfg=$1/boot/grub/grub.cfg
 		mkdir -p $1/boot/grub
 		echo 'set default=0' > ${iacfg}
+		echo 'serial --unit=0 --speed=115200' >> ${iacfg}
+		echo 'terminal_input serial; terminal_output serial' >> ${iacfg}
 		echo 'set gfxpayload=keep' >> ${iacfg}
 		echo 'set timeout=10' >> ${iacfg}
 		echo 'insmod all_video' >> ${iacfg}
@@ -95,27 +97,10 @@ case ${clst_hostarch} in
 			eval "kernel_console=\$clst_boot_kernel_${x}_console"
 
 			echo "menuentry 'Boot LiveCD (kernel: ${x})' --class gnu-linux --class os {"  >> ${iacfg}
-			echo "	linux ${kern_subdir}/${x} ${default_append_line[@]}" >> ${iacfg}
+			echo "	linux ${kern_subdir}/${x} ${default_append_line[@]} console=ttyS0,115200n8" >> ${iacfg}
 			echo "	initrd ${kern_subdir}/${x}.igz" >> ${iacfg}
 			echo "}" >> ${iacfg}
 			echo "" >> ${iacfg}
-			echo "menuentry 'Boot LiveCD (kernel: ${x}) (cached)' --class gnu-linux --class os {"  >> ${iacfg}
-			echo "	linux ${kern_subdir}/${x} ${default_append_line[@]} docache" >> ${iacfg}
-			echo "	initrd ${kern_subdir}/${x}.igz" >> ${iacfg}
-			echo "}" >> ${iacfg}
-			if [ -n "${kernel_console}" ]
-			then
-			echo "submenu 'Special console options (kernel: ${x})' --class gnu-linux --class os {" >> ${iacfg}
-				for y in ${kernel_console}
-				do
-					echo "menuentry 'Boot LiveCD (kernel: ${x} console=${y})' --class gnu-linux --class os {"  >> ${iacfg}
-					echo "	linux ${kern_subdir}/${x} ${default_append_line[@]} console=${y}" >> ${iacfg}
-					echo "	initrd ${kern_subdir}/${x}.igz" >> ${iacfg}
-					echo "}" >> ${iacfg}
-					echo "" >> ${iacfg}
-				done
-				echo "}" >> ${iacfg}
-			fi
 			echo "" >> ${iacfg}
 		done
 	;;
