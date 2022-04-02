@@ -35,12 +35,15 @@ sed -i -e 's:BINPKG_COMPRESS="bzip2":BINPKG_COMPRESS="zstd":' \
 if [ -n "${clst_update_seed}" ]; then
 	if [ "${clst_update_seed}" == "yes" ]; then
 		echo "Updating seed stage..."
+		ROOT=/ run_merge --oneshot dev-lang/perl $(for atom in 'virtual/perl*' 'dev-perl/*' 'dev-vcs/git' 'app-text/po4a' 'sys-apps/texinfo'; do
+			qlist -IC "$atom"
+		done)
 		if [ -n "${clst_update_seed_command}" ]; then
 			ROOT=/ run_merge --buildpkg=n "${clst_update_seed_command}"
 		elif grep -q '^\[changed-subslot\]' /usr/share/portage/config/sets/portage.conf; then
 			ROOT=/ run_merge --ignore-built-slot-operator-deps y @changed-subslot
 		else
-			ROOT=/ run_merge --update --deep --newuse --complete-graph --rebuild-if-new-ver gcc
+			ROOT=/ run_merge "--update --deep --newuse --complete-graph --rebuild-if-new-ver --autounmask=n gcc"
 		fi
 	elif [ "${clst_update_seed}" != "no" ]; then
 		echo "Invalid setting for update_seed: ${clst_update_seed}"
