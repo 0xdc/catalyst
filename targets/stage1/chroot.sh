@@ -39,11 +39,11 @@ if [ -n "${clst_update_seed}" ]; then
 			qlist -IC "$atom"
 		done)
 		if [ -n "${clst_update_seed_command}" ]; then
-			ROOT=/ run_merge --buildpkg=n "${clst_update_seed_command}"
+			ROOT=/ run_merge "${clst_update_seed_command}"
 		elif grep -q '^\[changed-subslot\]' /usr/share/portage/config/sets/portage.conf; then
 			ROOT=/ run_merge --ignore-built-slot-operator-deps y @changed-subslot
 		else
-			ROOT=/ run_merge "--update --deep --newuse --complete-graph --rebuild-if-new-ver --autounmask=n gcc"
+			ROOT=/ run_merge "--update --deep --changed-use --complete-graph --rebuild-if-new-ver --autounmask=n gcc"
 		fi
 	elif [ "${clst_update_seed}" != "no" ]; then
 		echo "Invalid setting for update_seed: ${clst_update_seed}"
