@@ -14,9 +14,8 @@ echo "Installing base system into ${ROOT}..."
 run_merge --oneshot sys-apps/baselayout
 
 export USE="-* build systemd udev"
-for package in sys-libs/glibc app-shells/bash sys-apps/systemd; do
-	run_merge "${package}"
-done
+run_merge sys-libs/glibc sys-apps/systemd
+run_merge app-shells/bash
 unset USE
 
 echo "Installing packages into ${clst_root_path}..."
