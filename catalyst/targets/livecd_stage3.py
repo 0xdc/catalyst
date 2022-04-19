@@ -25,6 +25,7 @@ class livecd_stage3(livecd_stage1):
         "livecd/empty",
         "livecd/fsscript",
         "livecd/fstype",
+        "livecd/fsops",
         "livecd/iso",
         "livecd/rm",
         "livecd/root_overlay",
