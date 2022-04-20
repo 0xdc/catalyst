@@ -589,20 +589,20 @@ class StageBase(TargetBase, ClearBase, GenBase):
     def set_groups(self):
         groups = self.settings["spec_prefix"] + "/groups"
         if groups in self.settings:
+            self.settings["groups"] = self.settings[groups]
             if isinstance(self.settings[groups], str):
                 self.settings["groups"] = self.settings[groups].split(",")
-            self.settings["groups"] = self.settings[groups]
             del self.settings[groups]
         else:
             self.settings["groups"] = []
         log.info('groups to create: %s' % self.settings["groups"])
 
-	def set_users(self):
+    def set_users(self):
         users = self.settings["spec_prefix"] + "/users"
         if users in self.settings:
+            self.settings["users"] = self.settings[users]
             if isinstance(self.settings[users], str):
                 self.settings["users"] = self.settings[users].split(",")
-            self.settings["users"] = self.settings[users]
             del self.settings[users]
         else:
             self.settings["users"] = []
@@ -611,9 +611,9 @@ class StageBase(TargetBase, ClearBase, GenBase):
     def set_ssh_public_keys(self):
         ssh_public_keys = self.settings["spec_prefix"] + "/ssh_public_keys"
         if ssh_public_keys in self.settings:
+            self.settings["ssh_public_keys"] = self.settings[ssh_public_keys]
             if isinstance(self.settings[ssh_public_keys], str):
                 self.settings["ssh_public_keys"] = self.settings[ssh_public_keys].split(",")
-            self.settings["ssh_public_keys"] = self.settings[ssh_public_keys]
             del self.settings[ssh_public_keys]
         else:
             self.settings["ssh_public_keys"] = []
@@ -931,7 +931,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
                         env=self.env)
 
     def groups(self):
-        for x in self.settings["groups"].split():
+        for x in self.settings["groups"]:
             log.notice("Creating group: '%s'", x)
             cmd(["groupadd", "-R", self.settings['chroot_path'], x], env=self.env)
 
