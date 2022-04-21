@@ -22,6 +22,7 @@ class systemd(StageBase):
         "embedded/packages",
     ])
     valid_values = required_values | frozenset([
+        "boot/kernel",
         "embedded/empty",
         "embedded/fsscript",
         "embedded/fstype",
@@ -36,6 +37,8 @@ class systemd(StageBase):
     def set_action_sequence(self):
         self.build_sequence.extend([
             self.build_packages,
+            self.build_kernel,
+            self.bootloader,
             self.root_overlay,
             self.fsscript,
         ])
