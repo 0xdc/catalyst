@@ -22,7 +22,7 @@ then
 fi
 
 case ${clst_fstype} in
-	squashfs)
+	squashfs|btrfs)
 		cmdline_opts+=(rd.live.overlay.overlayfs=1)
 	;;
 esac

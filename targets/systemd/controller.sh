@@ -31,6 +31,16 @@ case ${1} in
 		done
 	;;
 
+	target_image_setup)
+		shift
+		${clst_shdir}/${clst_target}/target_image_setup.sh ${1}
+	;;
+
+	iso)
+		shift
+		${clst_shdir}/support/create-iso.sh ${1}
+	;;
+
 	fsscript)
 		exec_in_chroot "${clst_fsscript}"
 	;;
