@@ -17,12 +17,19 @@ case ${clst_fstype} in
 		fi
 	;;
 	btrfs)
-		options=()
-		for arg in ${clst_fsops}; do
-			options+=(${arg})
-		done
-		mkfs.${clst_fstype} --rootdir="${clst_stage_path}" --force "${1}/LiveOS/rootfs.img" --shrink "${clst_fsops[@]}" \
-			|| die "Failed to create ${clst_fstype} filesystem"
+		squashdir="${clst_chroot_path}/tmp/livecd"
+		mkdir -p "${squashdir}/LiveOS"
+
+		mkfs.${clst_fstype} --rootdir="${clst_stage_path}" "${squashdir}/LiveOS/rootfs.img" \
+			--shrink --force || die "Failed to create ${clst_fstype} filesystem"
+
+		if command -v mksquashfs; then
+			mksquashfs "${squashdir}" "${1}/LiveOS/squashfs.img" ${clst_fsops} -noappend \
+				|| die "mksquashfs failed"
+		else
+			gensquashfs -D "${squashdir}" -q ${clst_fsops} "${1}/LiveOS/squashfs.img" \
+				|| die "Failed to create squashfs filesystem"
+		fi
 	;;
 	*)
 		mkfs.${clst_fstype} --root="${clst_stage_path}" --output="${1}/LiveOS/rootfs.img" "${clst_fsops}" \
