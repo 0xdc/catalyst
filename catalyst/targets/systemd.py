@@ -24,11 +24,14 @@ class systemd(StageBase):
     valid_values = required_values | frozenset([
         "boot/kernel",
         "embedded/empty",
+        "embedded/fsops",
         "embedded/fsscript",
         "embedded/fstype",
+        "embedded/iso",
         "embedded/rm",
         "embedded/root_overlay",
         "embedded/use",
+        "embedded/volid",
     ])
 
     def set_spec_prefix(self):
@@ -47,6 +50,25 @@ class systemd(StageBase):
             self.empty,
         ])
         self.set_completion_action_sequences()
+
+    def set_completion_action_sequences(self):
+        if "fetch" not in self.settings["options"]:
+            if "boot/kernel" in self.settings:
+                self.finish_sequence.append(self.target_setup)
+
+                iso = "%s/iso" % self.settings["spec_prefix"]
+                if iso in self.settings:
+                    self.finish_sequence.append(self.create_iso)
+            else:
+                self.finish_sequence.append(self.capture)
+
+        if "keepwork" in self.settings["options"]:
+            self.finish_sequence.append(self.clear_autoresume)
+        elif "seedcache" in self.settings["options"]:
+            self.finish_sequence.append(self.remove_autoresume)
+        else:
+            self.finish_sequence.append(self.remove_autoresume)
+            self.finish_sequence.append(self.remove_chroot)
 
     def set_root_path(self):
         self.settings["root_path"] = normpath("/tmp/mergeroot")
