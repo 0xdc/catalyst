@@ -2,6 +2,9 @@
 
 source ${clst_shdir}/support/functions.sh
 
+echo "Removing root password from target image..."
+systemd-firstboot --root="${clst_stage_path}" --delete-root-password --force
+
 mkdir -p "${1}"
 
 echo "Creating ${clst_fstype} filesystem"
