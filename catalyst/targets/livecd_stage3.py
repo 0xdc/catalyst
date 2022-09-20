@@ -35,7 +35,7 @@ class livecd_stage3(livecd_stage1):
     ])
 
     def set_action_sequence(self):
-        self.settings['action_sequence'] = [
+        self.finish_sequence.extend([
             "unpack",
             "bind",
             "setup_environment",
@@ -49,7 +49,7 @@ class livecd_stage3(livecd_stage1):
             "create_iso",
             "clear_autoresume",
             "remove_chroot",
-        ]
+        ])
 
     def set_target_path(self):
         '''Set the target path for the finished stage.
