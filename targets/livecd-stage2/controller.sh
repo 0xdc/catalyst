@@ -152,7 +152,7 @@ case $1 in
 		;;
 
 	unmerge)
-		[ "${clst_livecd_depclean}" != "no" ] && exec_in_chroot ${clst_shdir}/support/depclean.sh
+		exec_in_chroot ${clst_shdir}/support/depclean.sh
 		shift
         	export clst_packages="$*"
 		exec_in_chroot ${clst_shdir}/support/unmerge.sh
