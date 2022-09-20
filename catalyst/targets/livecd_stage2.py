@@ -64,24 +64,10 @@ class livecd_stage2(StageBase):
     def set_action_sequence(self):
         self.build_sequence.extend([
             self.run_local,
-            self.build_kernel
         ])
         if "fetch" not in self.settings["options"]:
             self.build_sequence.extend([
+                self.build_kernel,
                 self.bootloader,
-                self.preclean,
-                self.livecd_update,
-                self.root_overlay,
-                self.fsscript,
-                self.rcupdate,
-                self.unmerge,
             ])
-            self.finish_sequence.extend([
-                self.remove,
-                self.empty,
-                self.clean,
-                self.target_setup,
-                self.setup_overlay,
-                self.create_iso,
-            ])
-        self.set_completion_action_sequences()
+            self.set_completion_action_sequences()
