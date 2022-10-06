@@ -1170,6 +1170,9 @@ class StageBase(TargetBase, ClearBase, GenBase):
                     varname = x.split('_')[1].upper()
                     myf.write(f'{varname}="{self.settings[x]}"\n')
 
+            if setup and "interpreter" in self.settings:
+                myf.write('\nFEATURES="$FEATURES -pid-sandbox -network-sandbox"\n')
+
             # Set default locale for system responses. #478382
             myf.write(
                 '\n'
