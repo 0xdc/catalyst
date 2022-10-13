@@ -65,6 +65,7 @@ case $1 in
 		shift
 		export clst_packages="$*"
 		exec_in_chroot ${clst_shdir}/support/unmerge.sh
+		[ "${clst_stage4_depclean}" != "no" ] && exec_in_chroot ${clst_shdir}/support/depclean.sh
 	;;
 
 	iso)
