@@ -106,6 +106,9 @@ setup_features() {
 		export PATH="/usr/lib/icecc/bin:${PATH}"
 		export PREROOTPATH="/usr/lib/icecc/bin"
 	fi
+	if test "${clst_interpreter}"; then
+		features+=(-pid-sandbox -network-sandbox)
+	fi
 	export FEATURES="${features[@]}"
 }
 
