@@ -53,7 +53,7 @@ memtest_grub() {
   fi
 }
 
-default_append_line=(root=/dev/ram0 init=/linuxrc ${cmdline_opts[@]} cdroot)
+default_append_line=(mitigations=auto,nosmt root=/dev/ram0 init=/linuxrc ${cmdline_opts[@]} cdroot)
 
 case ${clst_hostarch} in
 	alpha)
