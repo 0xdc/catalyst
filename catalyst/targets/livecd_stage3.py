@@ -41,7 +41,6 @@ class livecd_stage3(livecd_stage1):
             "setup_environment",
             "root_overlay",
             "bootloader",
-            "unbind",
             "remove",
             "empty",
             "clean",
