@@ -30,6 +30,7 @@ class livecd_stage1(StageBase):
     def set_action_sequence(self):
         self.build_sequence.extend([
             self.build_packages,
+            self.unmerge,
         ])
         self.finish_sequence.extend([
             self.clean,
