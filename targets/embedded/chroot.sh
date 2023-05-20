@@ -15,7 +15,7 @@ run_merge sys-apps/baselayout
 
 split_usr
 
-export USE="-* build systemd udev"
+export USE="-* build systemd udev gawk pigz"
 run_merge sys-libs/glibc sys-apps/systemd
 run_merge app-shells/bash
 unset USE
