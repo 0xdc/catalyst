@@ -283,6 +283,24 @@ show_debug() {
 	fi
 }
 
+split_usr() {
+	if ! grep -q split-usr ${ROOT}/var/db/pkg/sys-apps/baselayout-*/USE; then
+		test -d  ${ROOT}/usr/bin || mkdir -p        ${ROOT}/usr/bin
+		test -L      ${ROOT}/bin || ln -sv usr/bin      ${ROOT}/bin
+		test -L     ${ROOT}/sbin || ln -sv usr/bin     ${ROOT}/sbin
+		test -L ${ROOT}/usr/sbin || ln -sv     bin ${ROOT}/usr/sbin
+
+		for bindir in bin sbin usr/sbin; do
+			if ! test ${ROOT}/${bindir} -ef ${ROOT}/usr/bin; then
+				echo "/${bindir} mismatch"
+				ls -ld ${ROOT}/${bindir}
+				ls -l ${ROOT}/${bindir}
+				exit 1
+			fi
+		done
+	fi
+}
+
 readonly locales="
 C.UTF8 UTF-8
 "

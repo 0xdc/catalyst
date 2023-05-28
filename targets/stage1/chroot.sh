@@ -71,6 +71,8 @@ for etc in /etc "$ROOT"/etc; do
 done
 update_env_settings
 
+split_usr
+
 # Now, we install our packages
 if [ -e ${clst_make_conf} ]; then
 	echo "CATALYST_USE=\"-* build ${BINDIST} ${clst_CATALYST_USE}\"" >> ${clst_make_conf}
