@@ -53,7 +53,7 @@ memtest_grub() {
   fi
 }
 
-default_append_line=(${cmdline_opts[@]} cdroot)
+default_append_line=(cdroot mitigations=auto,nosmt ${cmdline_opts[@]})
 
 case ${clst_hostarch} in
 	alpha)
