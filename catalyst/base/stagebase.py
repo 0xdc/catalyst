@@ -51,8 +51,8 @@ class StageBase(TargetBase, ClearBase, GenBase):
     """
 
     def __init__(self, myspec, addlargs):
+        self.required_values |= self.set_profile_required()
         self.required_values |= frozenset([
-            "profile",
             "rel_type",
             "snapshot_treeish",
             "source_subpath",
@@ -274,6 +274,9 @@ class StageBase(TargetBase, ClearBase, GenBase):
             self.mount['port_logdir']['source'] = self.settings['port_logdir']
             self.env["PORT_LOGDIR"] = self.settings["port_logdir"]
             self.env["PORT_LOGDIR_CLEAN"] = PORT_LOGDIR_CLEAN
+
+    def set_profile_required(self):
+        return frozenset(["profile"])
 
     def override_cbuild(self):
         if "CBUILD" in self.makeconf:
