@@ -3,6 +3,7 @@ LiveCD stage3 target
 """
 # NOTE: That^^ docstring has influence catalyst-spec(5) man page generation.
 
+from catalyst import log
 from catalyst.support import normpath
 from catalyst.fileops import clear_dir
 from catalyst.targets.livecd_stage1 import livecd_stage1
@@ -17,11 +18,11 @@ class livecd_stage3(livecd_stage1):
     Requires a cached kernel name and cdtar
     """
     required_values = frozenset([
-        # profile is required (due to __init__), but not used
         "boot/kernel",
         "livecd/cdtar",
     ])
     valid_values = required_values | frozenset([
+        "profile", # deprecated
         "livecd/empty",
         "livecd/fsscript",
         "livecd/fstype",
@@ -33,6 +34,13 @@ class livecd_stage3(livecd_stage1):
         "livecd/verify",
         "livecd/volid",
     ])
+
+    def set_profile_required(self):
+        return frozenset([])
+
+    def set_target_profile(self):
+        if "profile" in self.settings:
+            log.notice("Deprecated setting 'profile' is set in specfile.")
 
     def set_action_sequence(self):
         self.prepare_sequence = [
