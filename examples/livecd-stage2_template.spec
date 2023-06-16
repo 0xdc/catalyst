@@ -284,6 +284,7 @@ boot/kernel/gentoo/console:
 # or to keep build deps.  For those cases, the following two special cases are available:
 # livecd/depclean: no
 # livecd/depclean: keepbdeps
+# This requires livecd/unmerge to be set.
 
 # This is a list of packages that will be unmerged after all the kernels have
 # been built.  There are no checks on these packages, so be careful what you

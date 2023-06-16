@@ -342,6 +342,7 @@ or to keep build deps.  For those cases, the following two special cases are ava
 livecd/depclean: no
 livecd/depclean: keepbdeps
 This setting is only supported by the livecd target.
+This setting requires `livecd/unmerge` to be set.
 
 *<target>/unmerge*::
 This is a list of packages that will be unmerged after all the kernels
