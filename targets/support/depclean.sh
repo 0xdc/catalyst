@@ -2,10 +2,13 @@
 
 source /tmp/chroot-functions.sh
 
-if [ "${clst_livecd_depclean}" = "keepbdeps" ]; then
+case "${clst_livecd_depclean}" in
+keepbdeps)
 	run_merge --depclean --with-bdeps=y
-else
+	;;
+yes|all)
 	run_merge --depclean --with-bdeps=n
-fi
+	;;
+esac
 
 exit 0
