@@ -241,6 +241,16 @@ boot/kernel/gentoo/extraversion:
 # boot/kernel/gentoo/packages: pcmcia-cs speedtouch slmodem globespan-adsl hostap-driver hostap-utils ipw2100 ipw2200 fritzcapi fcdsl cryptsetup
 boot/kernel/gentoo/packages:
 
+# This feature controls the depclean run after fsscript and before unmerge.
+# The default is unset, and will not run emerge --depclean.
+# For some use cases it may be nice to run depclean, keeping build deps.
+# Or to depclean, removing build deps, for the smallest stage.
+# For those cases, the following two special cases are available:
+# stage4/depclean: keepbdeps
+# stage4/depclean: yes
+# This requires stage4/unmerge to be set.
+stage4/depclean:
+
 # This is a list of packages that will be unmerged after all the kernels have
 # been built.  There are no checks on these packages, so be careful what you
 # add here.  They can potentially break your CD.

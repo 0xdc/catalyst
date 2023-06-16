@@ -2,7 +2,7 @@
 
 source /tmp/chroot-functions.sh
 
-case "${clst_livecd_depclean}" in
+case "${clst_livecd_depclean}${clst_stage4_depclean}" in
 keepbdeps)
 	run_merge --depclean --with-bdeps=y
 	;;

@@ -334,16 +334,16 @@ This is a list of any other files, not belonging to the above
 packages, that you would wish to have copied into your netboot image
 (example: `/lib/libresolv.so.2 /lib/libnss_compat.so.2`).
 
-*livecd/depclean*::
+*<target>/depclean*::
 This feature controls the depclean run after fsscript and before unmerge.
 The default is unset, and will not run emerge --depclean.
 For some use cases it may be nice to run depclean, keeping build deps.
 Or to depclean removing build deps for the smallest livecd.
 For those cases, the following two special cases are available:
-livecd/depclean: keepbdeps
-livecd/depclean: yes
-This setting is only supported by the livecd target.
-This setting requires `livecd/unmerge` to be set.
+<target>/depclean: keepbdeps
+<target>/depclean: yes
+This setting is supported by the `livecd` and `stage4` targets.
+This setting requires `<target>/unmerge` to be set.
 
 *<target>/unmerge*::
 This is a list of packages that will be unmerged after all the kernels
