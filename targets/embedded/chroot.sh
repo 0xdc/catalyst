@@ -17,8 +17,9 @@ split_usr
 
 export USE="-* build systemd udev gawk pigz"
 
-run_merge sys-libs/glibc sys-apps/systemd
-run_merge app-shells/bash
+for package in sys-libs/glibc app-shells/bash sys-apps/systemd; do
+	run_merge "${package}"
+done
 unset USE
 
 split_usr
