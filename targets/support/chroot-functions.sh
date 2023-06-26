@@ -106,6 +106,9 @@ setup_features() {
 		export PATH="/usr/lib/icecc/bin:${PATH}"
 		export PREROOTPATH="/usr/lib/icecc/bin"
 	fi
+	if test "${clst_interpreter}"; then
+		features+=(-pid-sandbox -network-sandbox)
+	fi
 	export FEATURES="${features[@]}"
 }
 
@@ -135,7 +138,7 @@ setup_emerge_opts() {
 		emerge_opts+=(--load-average "${clst_load_average}")
 	fi
 
-	if [ -n "${clst_PKGCACHE}" ] && [ -z "${clst_update_seed}" -o "${clst_update_seed}" = "no" ]
+	if [ -n "${clst_PKGCACHE}" ]
 	then
 		emerge_opts+=(--usepkg --buildpkg --binpkg-respect-use=y --newuse)
 		bootstrap_opts+=(-r)
@@ -280,6 +283,24 @@ show_debug() {
 		echo "MULTILIB_ABIS:         $(portageq envvar MULTILIB_ABIS)"
 		echo "PROFILE_ARCH:          $(portageq envvar PROFILE_ARCH)"
 		echo
+	fi
+}
+
+split_usr() {
+	if ! grep -q split-usr ${ROOT}/var/db/pkg/sys-apps/baselayout-*/USE; then
+		test -d  ${ROOT}/usr/bin || mkdir -p        ${ROOT}/usr/bin
+		test -L      ${ROOT}/bin || ln -sv usr/bin      ${ROOT}/bin
+		test -L     ${ROOT}/sbin || ln -sv usr/bin     ${ROOT}/sbin
+		test -L ${ROOT}/usr/sbin || ln -sv     bin ${ROOT}/usr/sbin
+
+		for bindir in bin sbin usr/sbin; do
+			if ! test ${ROOT}/${bindir} -ef ${ROOT}/usr/bin; then
+				echo "/${bindir} mismatch"
+				ls -ld ${ROOT}/${bindir}
+				ls -l ${ROOT}/${bindir}
+				exit 1
+			fi
+		done
 	fi
 }
 

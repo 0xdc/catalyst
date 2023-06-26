@@ -54,6 +54,7 @@ case $1 in
 	;;
 
 	unmerge)
+		exec_in_chroot ${clst_shdir}/support/depclean.sh
 		shift
 		export clst_packages="$*"
 		exec_in_chroot ${clst_shdir}/support/unmerge.sh

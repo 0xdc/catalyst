@@ -279,11 +279,13 @@ boot/kernel/gentoo/console:
 #livecd/verify: blake2
 
 # This feature controls the depclean run after fsscript and before unmerge.
-# The default is unset, and will run emerge --depclean --with-bdeps=n which results
-# in the smallest possible livecd.  For some use cases it may be nice to not run depclean at all,
-# or to keep build deps.  For those cases, the following two special cases are available:
-# livecd/depclean: no
+# The default is unset, and will not run emerge --depclean.
+# For some use cases it may be nice to run depclean, keeping build deps.
+# Or to depclean, removing build deps, for the smallest livecds.
+# For those cases, the following two special cases are available:
 # livecd/depclean: keepbdeps
+# livecd/depclean: yes
+# This requires livecd/unmerge to be set.
 
 # This is a list of packages that will be unmerged after all the kernels have
 # been built.  There are no checks on these packages, so be careful what you

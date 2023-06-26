@@ -53,7 +53,7 @@ memtest_grub() {
   fi
 }
 
-default_append_line=(${cmdline_opts[@]} cdroot)
+default_append_line=(cdroot mitigations=auto,nosmt ${cmdline_opts[@]})
 
 case ${clst_hostarch} in
 	alpha)
@@ -117,7 +117,7 @@ case ${clst_hostarch} in
 			eval "kernel_console=\$clst_boot_kernel_${x}_console"
 
 			echo "menuentry 'Boot LiveCD (kernel: ${x})' --class gnu-linux --class os {"  >> ${iacfg}
-			echo "	linux ${kern_subdir}/${x} ${default_append_line[@]}" >> ${iacfg}
+			echo "	linux ${kern_subdir}/${x} ${default_append_line[@]} overlayfs" >> ${iacfg}
 			echo "	initrd ${kern_subdir}/${x}.igz" >> ${iacfg}
 			echo "}" >> ${iacfg}
 			echo "" >> ${iacfg}

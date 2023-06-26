@@ -17,37 +17,12 @@ class livecd_stage2(StageBase):
     ])
     valid_values = required_values | frozenset([
         "livecd/bootargs",
-        "livecd/cdtar",
-        "livecd/depclean",
-        "livecd/empty",
-        "livecd/fsops",
-        "livecd/fsscript",
-        "livecd/fstype",
         "livecd/gk_mainargs",
-        "livecd/iso",
-        "livecd/linuxrc",
-        "livecd/modblacklist",
-        "livecd/motd",
-        "livecd/overlay",
-        "livecd/rcadd",
-        "livecd/rcdel",
         "livecd/readme",
-        "livecd/rm",
-        "livecd/root_overlay",
         "livecd/type",
-        "livecd/unmerge",
-        "livecd/users",
         "livecd/verify",
-        "livecd/volid",
         "repos",
     ])
-
-    def __init__(self, spec, addlargs):
-        StageBase.__init__(self, spec, addlargs)
-        if "livecd/type" not in self.settings:
-            self.settings["livecd/type"] = "generic-livecd"
-
-        file_locate(self.settings, ["cdtar", "controller_file"])
 
     def set_spec_prefix(self):
         self.settings["spec_prefix"] = "livecd"
@@ -82,27 +57,17 @@ class livecd_stage2(StageBase):
                                     "/etc/modprobe.d/blacklist.conf.",
                                     print_traceback=True) from e
 
+    def set_stage_path(self):
+        self.set_target_path()
+        self.settings['stage_path'] = self.settings['target_path']
+
     def set_action_sequence(self):
         self.build_sequence.extend([
             self.run_local,
-            self.build_kernel
         ])
         if "fetch" not in self.settings["options"]:
             self.build_sequence.extend([
+                self.build_kernel,
                 self.bootloader,
-                self.preclean,
-                self.livecd_update,
-                self.root_overlay,
-                self.fsscript,
-                self.rcupdate,
-                self.unmerge,
             ])
-            self.finish_sequence.extend([
-                self.remove,
-                self.empty,
-                self.clean,
-                self.target_setup,
-                self.setup_overlay,
-                self.create_iso,
-            ])
-        self.set_completion_action_sequences()
+            self.set_completion_action_sequences()
