@@ -14,7 +14,7 @@ run_merge --oneshot sys-apps/baselayout
 
 split_usr
 
-export USE="-* build systemd udev"
+export USE="-* build systemd udev gawk pigz"
 for package in sys-libs/glibc sys-apps/systemd app-shells/bash; do
 	run_merge "${package}"
 done
