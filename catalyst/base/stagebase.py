@@ -271,9 +271,8 @@ class StageBase(TargetBase, ClearBase, GenBase):
 
         if "port_logdir" in self.settings:
             self.mount['port_logdir']['enable'] = True
-            self.mount['port_logdir']['source'] = self.settings['port_logdir']
-            self.env["PORT_LOGDIR"] = self.settings["port_logdir"]
-            self.env["PORT_LOGDIR_CLEAN"] = PORT_LOGDIR_CLEAN
+            self.mount['port_logdir']['source'] = normpath(self.settings['port_logdir'] + "/" + self.settings["target_subpath"] + "/")
+            self.env["PORTAGE_LOGDIR"] = self.settings["target_logdir"]
 
     def set_profile_required(self):
         return frozenset(["profile"])
@@ -1005,7 +1004,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
                     # We may need to create the source of the bind mount. E.g., in the
                     # case of an empty package cache we must create the directory that
                     # the binary packages will be stored into.
-                    source_path.mkdir(mode=0o755, exist_ok=True)
+                    source_path.mkdir(mode=0o755, parents=True, exist_ok=True)
 
             Path(target).mkdir(mode=0o755, parents=True, exist_ok=True)
 
@@ -1117,13 +1116,13 @@ class StageBase(TargetBase, ClearBase, GenBase):
                               % (flags, self.settings[flags]))
 
             if "CBUILD" in self.settings:
-                myf.write("# This should not be changed unless you know exactly"
+                myf.write("\n# This should not be changed unless you know exactly"
                           " what you are doing.  You\n# should probably be "
                           "using a different stage, instead.\n")
                 myf.write('CBUILD="' + self.settings["CBUILD"] + '"\n')
 
             if "CHOST" in self.settings:
-                myf.write("# WARNING: Changing your CHOST is not something "
+                myf.write("\n# WARNING: Changing your CHOST is not something "
                           "that should be done lightly.\n# Please consult "
                           "https://wiki.gentoo.org/wiki/Changing_the_CHOST_variable "
                           "before changing.\n")
