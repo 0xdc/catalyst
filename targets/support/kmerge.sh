@@ -153,14 +153,14 @@ fi
 
 if [[ ${distkernel} = "yes" ]] ; then
   # Kernel already built, let's run dracut to make initramfs
-  distkernel_source_path=$(equery -Cq f ${ksource} | grep "/usr/src/linux-" -m1)
+  distkernel_source_path=$(qlist -Ced ${ksource} | grep "/usr/src/linux-" -m1)
   distkernel_image_path=$(distkmerge_get_image_path)
-  distkernel_version=${distkernel_source_path##"/usr/src/linux-"}
+  distkernel_version=$(basename ${distkernel_source_path##"/usr/src/linux-"})
 
   DRACUT_ARGS=(
     "${kernel_dracut_kernargs[@]}"
     --force
-    --kernel-image="${distkernel_source_path}/${distkernel_image_path}"
+    --kernel-image="${distkernel_source_path}${distkernel_image_path}"
     --kver="${distkernel_version}"
   )
 
