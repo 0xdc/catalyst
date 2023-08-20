@@ -178,6 +178,7 @@ if [[ ${distkernel} = "yes" ]] ; then
   cd /
   tar jcvf /tmp/kerncache/${kname}-modules-${clst_version_stamp}.tar.bz2 lib/modules
 
+  cp /boot/config-${distkernel_version} /var/tmp/${kname}.config
 else
   if [[ -n ${clst_kextraversion} ]]; then
     echo "Setting EXTRAVERSION to ${clst_kextraversion}"
