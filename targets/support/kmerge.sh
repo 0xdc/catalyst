@@ -158,6 +158,7 @@ if [[ ${distkernel} = "yes" ]] ; then
   distkernel_version=$(basename ${distkernel_source_path##"/usr/src/linux-"})
 
   DRACUT_ARGS=(
+    --add dmsquash-live
     "${kernel_dracut_kernargs[@]}"
     --force
     --kernel-image="${distkernel_source_path}${distkernel_image_path}"
