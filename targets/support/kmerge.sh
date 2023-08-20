@@ -10,7 +10,11 @@ distkmerge_get_image_path() {
             echo arch/x86/boot/bzImage
             ;;
         arm64)
-            echo arch/arm64/boot/Image.gz
+            if grep -qE '^CONFIG_EFI_ZBOOT=y$' /boot/config-${distkernel_version}; then
+              echo arch/arm64/boot/vmlinuz.efi
+            else
+              echo arch/arm64/boot/Image.gz
+            fi
             ;;
         arm)
             echo arch/arm/boot/zImage
@@ -155,8 +159,8 @@ fi
 if [[ ${distkernel} = "yes" ]] ; then
   # Kernel already built, let's run dracut to make initramfs
   distkernel_source_path=$(qlist -Ced ${ksource} | grep "/usr/src/linux-" -m1)
-  distkernel_image_path=$(distkmerge_get_image_path)
   distkernel_version=$(basename ${distkernel_source_path##"/usr/src/linux-"})
+  distkernel_image_path=$(distkmerge_get_image_path)
 
   DRACUT_ARGS=(
     --add dmsquash-live
