@@ -132,10 +132,10 @@ if [[ -n ${clst_KERNCACHE} ]]; then
 	popd >/dev/null
 fi
 
-if [[ ! ${cached_kernel_found} ]]; then
-  if [[ ${distkernel} = "yes" ]] ; then
+if [[ ${distkernel} = "yes" ]] ; then
 USE="-initramfs" run_merge --update "${ksource}"
-  else
+else
+  if [[ ! ${cached_kernel_found} ]]; then
 USE="symlink" run_merge --update "${ksource}"
   fi
 fi
