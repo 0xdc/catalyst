@@ -134,6 +134,7 @@ fi
 
 if [[ ${distkernel} = "yes" ]] ; then
 USE="-initramfs" run_merge --update "${ksource}"
+test "${kernel_merge}" && run_merge --update ${kernel_merge}
 else
   if [[ ! ${cached_kernel_found} ]]; then
 USE="symlink" run_merge --update "${ksource}"
