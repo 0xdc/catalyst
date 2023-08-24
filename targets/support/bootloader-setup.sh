@@ -10,7 +10,9 @@ fi
 
 extract_kernels $1/boot
 
-cmdline_opts=()
+cmdline_opts=(mitigations=auto,nosmt)
+default_append_line=(cdroot)
+default_dracut_append_line=(root=live:CDLABEL=ISOIMAGE)
 
 # Add any additional options
 if [ -n "${clst_livecd_bootargs}" ]
@@ -23,7 +25,8 @@ fi
 
 case ${clst_fstype} in
 	squashfs)
-		cmdline_opts+=(looptype=squashfs loop=/image.squashfs)
+		default_dracut_append_line+=(rd.live.dir=/ rd.live.squashimg=image.squashfs)
+		default_append_line+=(looptype=squashfs loop=/image.squashfs)
 	;;
 	jffs2)
 		cmdline_opts+=(looptype=jffs2 loop=/image.jffs2)
@@ -52,9 +55,6 @@ memtest_grub() {
     echo '}'
   fi
 }
-
-default_append_line=(${cmdline_opts[@]} cdroot)
-default_dracut_append_line=(root=live:CDLABEL=ISOIMAGE rd.live.dir=/ rd.live.squashimg=image.squashfs)
 
 case ${clst_hostarch} in
 	alpha)
@@ -96,7 +96,7 @@ case ${clst_hostarch} in
 		# copy the bootloader for the final image
 		cp /usr/share/palo/iplboot $1/boot/
 
-		echo "--commandline=0/${boot_kernel_common_name} initrd=${first}.igz ${default_append_line[@]}" >> ${icfg}
+		echo "--commandline=0/${boot_kernel_common_name} initrd=${first}.igz ${default_append_line[@]} ${cmdline_opts[@]}" >> ${icfg}
 		echo "--bootloader=boot/iplboot" >> ${icfg}
 		echo "--ramdisk=boot/${first}.igz" >> ${icfg}
 		for x in ${clst_boot_kernel}
@@ -122,9 +122,9 @@ case ${clst_hostarch} in
 			if [ ${distkernel} = "yes" ]
 			then
 				echo "	search --no-floppy --set=root -l 'ISOIMAGE'" >> ${iacfg}
-				echo "	linux ${kern_subdir}/${x} ${default_dracut_append_line[@]}" >> ${iacfg}
+				echo "	linux ${kern_subdir}/${x} ${default_dracut_append_line[@]} ${cmdline_opts[@]}" >> ${iacfg}
 			else
-				echo "	linux ${kern_subdir}/${x} ${default_append_line[@]}" >> ${iacfg}
+				echo "	linux ${kern_subdir}/${x} ${default_append_line[@]} ${cmdline_opts[@]}" >> ${iacfg}
 			fi
 			echo "	initrd ${kern_subdir}/${x}.igz" >> ${iacfg}
 			echo "}" >> ${iacfg}
@@ -133,9 +133,9 @@ case ${clst_hostarch} in
 			if [ ${distkernel} = "yes" ]
 			then
 				echo "	search --no-floppy --set=root -l 'ISOIMAGE'" >> ${iacfg}
-				echo "	linux ${kern_subdir}/${x} ${default_dracut_append_line[@]} rd.live.ram=1" >> ${iacfg}
+				echo "	linux ${kern_subdir}/${x} ${default_dracut_append_line[@]} rd.live.ram=1 ${cmdline_opts[@]}" >> ${iacfg}
 			else
-				echo "	linux ${kern_subdir}/${x} ${default_append_line[@]} docache" >> ${iacfg}
+				echo "	linux ${kern_subdir}/${x} ${default_append_line[@]} docache ${cmdline_opts[@]}" >> ${iacfg}
 			fi
 
 			echo "	initrd ${kern_subdir}/${x}.igz" >> ${iacfg}
@@ -146,7 +146,13 @@ case ${clst_hostarch} in
 				for y in ${kernel_console}
 				do
 					echo "menuentry 'Boot LiveCD (kernel: ${x} console=${y})' --class gnu-linux --class os {"  >> ${iacfg}
-					echo "	linux ${kern_subdir}/${x} ${default_append_line[@]} console=${y}" >> ${iacfg}
+					if [ ${distkernel} = "yes" ]
+					then
+						echo "	search --no-floppy --set=root -l 'ISOIMAGE'" >> ${iacfg}
+						echo "	linux ${kern_subdir}/${x} ${default_dracut_append_line[@]} ${cmdline_opts[@]} console=${y} " >> ${iacfg}
+					else
+						echo "  linux ${kern_subdir}/${x} ${default_append_line[@]} ${cmdline_opts[@]} console=${y}" >> ${iacfg}
+					fi
 					echo "	initrd ${kern_subdir}/${x}.igz" >> ${iacfg}
 					echo "}" >> ${iacfg}
 					echo "" >> ${iacfg}
