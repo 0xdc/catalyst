@@ -22,6 +22,11 @@ case ${1} in
 		exec_in_chroot ${clst_shdir}/${clst_target}/kmerge.sh
 	;;
 
+	pre-distkmerge)
+		# Install dracut
+		exec_in_chroot ${clst_shdir}/support/pre-distkmerge.sh
+		;;
+
 	bootloader)
 		shift
 		${clst_shdir}/${clst_target}/bootloader-setup.sh ${1}

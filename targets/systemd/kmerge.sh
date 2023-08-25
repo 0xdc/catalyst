@@ -84,8 +84,15 @@ eval "initramfs_overlay=\$clst_boot_kernel_${kname}_initramfs_overlay"
 eval "kernel_merge=\$clst_boot_kernel_${kname}_packages"
 eval "kernel_use=\$clst_boot_kernel_${kname}_use"
 eval eval kernel_gk_kernargs=( \$clst_boot_kernel_${kname}_gk_kernargs )
+eval eval kernel_dracut_kernargs=( \$clst_boot_kernel_${kname}_dracut_args )
 eval "ksource=\$clst_boot_kernel_${kname}_sources"
-[[ -z ${ksource} ]] && ksource="sys-kernel/gentoo-sources"
+eval "distkernel=\$clst_boot_kernel_${kname}_distkernel"
+
+if [[ ${distkernel} = "yes" ]] ; then
+  [[ -z ${ksource} ]] && ksource="sys-kernel/gentoo-kernel"
+else
+  [[ -z ${ksource} ]] && ksource="sys-kernel/gentoo-sources"
+fi
 
 kernel_version=$(portageq best_visible / "${ksource}")
 
@@ -108,8 +115,12 @@ if [[ -n ${clst_KERNCACHE} ]]; then
 	popd >/dev/null
 fi
 
-if [[ ! ${cached_kernel_found} ]]; then
-	USE=symlink run_merge --update "${ksource}"
+if [[ ${distkernel} = "yes" ]] ; then
+	USE="-initramfs" run_merge --update "${ksource}"
+else
+	if [[ ! ${cached_kernel_found} ]]; then
+		USE=symlink run_merge --update "${ksource}"
+	fi
 fi
 
 if [[ -n ${clst_KERNCACHE} ]]; then
@@ -123,19 +134,44 @@ if [[ -n ${clst_KERNCACHE} ]]; then
 	ln -snf "${SOURCESDIR}" /usr/src/linux
 fi
 
-if [[ -n ${clst_kextraversion} ]]; then
-	echo "Setting EXTRAVERSION to ${clst_kextraversion}"
+if [[ ${distkernel} = "yes" ]] ; then
+	# Kernel already built, let's run dracut to make initramfs
+	distkernel_source_path=$(qlist -Ced ${ksource} | grep "/usr/src/linux-" -m1)
+	distkernel_version=$(basename ${distkernel_source_path##"/usr/src/linux-"})
+	distkernel_image_path=$(distkmerge_get_image_path)
 
-	if [[ -e /usr/src/linux/Makefile.bak ]]; then
-		cp /usr/src/linux/Makefile{.bak,}
-	else
-		cp /usr/src/linux/Makefile{,.bak}
+	DRACUT_ARGS=(
+		--add dmsquash-live
+		"${kernel_dracut_kernargs[@]}"
+		--force
+		--kernel-image="${distkernel_source_path}${distkernel_image_path}"
+		--kver="${distkernel_version}"
+	)
+
+	dracut "${DRACUT_ARGS[@]}" || exit 1
+
+	# Create minkernel package to mimic genkernel's behaviour
+	cd /boot
+	tar jcvf /tmp/kerncache/${kname}-kernel-initrd-${clst_version_stamp}.tar.bz2 System.map* config* initramfs* vmlinuz*
+	cd /
+	tar jcvf /tmp/kerncache/${kname}-modules-${clst_version_stamp}.tar.bz2 lib/modules
+
+	cp /boot/config-${distkernel_version} /var/tmp/${kname}.config
+else
+	if [[ -n ${clst_kextraversion} ]]; then
+		echo "Setting EXTRAVERSION to ${clst_kextraversion}"
+
+		if [[ -e /usr/src/linux/Makefile.bak ]]; then
+			cp /usr/src/linux/Makefile{.bak,}
+		else
+			cp /usr/src/linux/Makefile{,.bak}
+		fi
+		sed -i -e "s:EXTRAVERSION \(=.*\):EXTRAVERSION \1-${clst_kextraversion}:" \
+			/usr/src/linux/Makefile
 	fi
-	sed -i -e "s:EXTRAVERSION \(=.*\):EXTRAVERSION \1-${clst_kextraversion}:" \
-		/usr/src/linux/Makefile
-fi
 
-genkernel_compile
+	genkernel_compile
+fi
 
 # Write out CONFIG, USE, VERSION, and EXTRAVERSION files
 if [[ -n ${clst_KERNCACHE} && ! ${cached_kernel_found} ]]; then
