@@ -62,6 +62,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
         ])
         self.valid_values |= self.required_values | frozenset([
             "asflags",
+            "binrepo_path",
             "catalyst_use",
             "cbuild",
             "cflags",
@@ -696,6 +697,8 @@ class StageBase(TargetBase, ClearBase, GenBase):
                     "boot/kernel/" + x + "/aliases",
                     "boot/kernel/" + x + "/config",
                     "boot/kernel/" + x + "/console",
+                    "boot/kernel/" + x + "/distkernel",
+                    "boot/kernel/" + x + "/dracut_args",
                     "boot/kernel/" + x + "/extraversion",
                     "boot/kernel/" + x + "/gk_action",
                     "boot/kernel/" + x + "/gk_kernargs",
@@ -717,6 +720,11 @@ class StageBase(TargetBase, ClearBase, GenBase):
         if gk_mainargs in self.settings:
             self.settings["gk_mainargs"] = self.settings[gk_mainargs]
             del self.settings[gk_mainargs]
+
+        dracut_mainargs = prefix + "/dracut_args"
+        if dracut_mainargs in self.settings:
+            self.settings["dracut_args"] = self.settings[dracut_mainargs]
+            del self.settings[dracut_mainargs]
 
         # Ask genkernel to include b2sum if <target>/verify is set
         verify = prefix + "/verify"
@@ -1077,6 +1085,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
         if os.path.exists(hosts_file):
             os.rename(hosts_file, hosts_file + '.catalyst')
             shutil.copy('/etc/hosts', hosts_file)
+
         # write out the make.conf
         try:
             self.write_make_conf(setup=True)
@@ -1084,6 +1093,16 @@ class StageBase(TargetBase, ClearBase, GenBase):
             raise CatalystError('Could not write %s: %s' % (
                 normpath(self.settings["chroot_path"] +
                          self.settings["make_conf"]), e)) from e
+
+        # write out the binrepos.conf
+        # we do this here for later user convenience, but normally
+        # it should not affect stage builds (which only get --usepkg,
+        # but never --getbinpkg as emerge parameters).
+        try:
+            self.write_binrepos_conf()
+        except OSError as e:
+            raise CatalystError('Could not write binrepos.conf: %s' % ( e )) from e
+
         self.resume.enable("chroot_setup")
 
     def write_make_conf(self, setup=True):
@@ -1179,6 +1198,26 @@ class StageBase(TargetBase, ClearBase, GenBase):
                 '# This sets the language of build output to English.\n'
                 '# Please keep this setting intact when reporting bugs.\n'
                 'LC_MESSAGES=C.utf8\n')
+
+    def write_binrepos_conf(self):
+        # only if catalyst.conf defines the host and the spec defines the path...
+        if self.settings["binhost"] != '' and "binrepo_path" in self.settings:
+
+            # Write out binrepos.conf (for the chroot)
+            binrpath = normpath(self.settings["chroot_path"] +
+                                self.settings["binrepos_conf"])
+
+            with open(binrpath, "w") as myb:
+                log.notice("Writing the stage binrepos.conf to: %s" % binrpath)
+                myb.write("# These settings were set by the catalyst build script "
+                        "that automatically\n# built this stage.\n")
+                myb.write("# Please consider using a local mirror.\n\n")
+                myb.write("[gentoobinhost]\n")
+                myb.write("priority = 1\n")
+                myb.write("sync-uri = " + self.settings["binhost"] + \
+                        self.settings["binrepo_path"] + "\n")
+
+        return
 
     def fsscript(self):
         if "autoresume" in self.settings["options"] \
@@ -1558,7 +1597,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
                 self.resume.enable("build_packages")
 
     def build_kernel(self):
-        '''Build all configured kernels'''
+        """Build all configured kernels"""
         if "autoresume" in self.settings["options"] \
                 and self.resume.is_enabled("build_kernel"):
             log.notice(
@@ -1569,19 +1608,23 @@ class StageBase(TargetBase, ClearBase, GenBase):
             mynames = self.settings["boot/kernel"]
             if isinstance(mynames, str):
                 mynames = [mynames]
-            # Execute the script that sets up the kernel build environment
-            cmd([self.settings['controller_file'], 'pre-kmerge'], env=self.env)
             for kname in [sanitize_name(name) for name in mynames]:
+                if "boot/kernel/" + kname + "/distkernel" in self.settings:
+                    cmd([self.settings['controller_file'], 'pre-distkmerge'], env=self.env)
+                else:
+                    # Execute the script that sets up the kernel build environment
+                    cmd([self.settings['controller_file'], 'pre-kmerge'], env=self.env)
                 self._build_kernel(kname=kname)
             self.resume.enable("build_kernel")
 
     def _build_kernel(self, kname):
-        "Build a single configured kernel by name"
+        """Build a single configured kernel by name"""
         if "autoresume" in self.settings["options"] \
                 and self.resume.is_enabled("build_kernel_" + kname):
             log.notice('Resume point detected, skipping build_kernel '
                        'for %s operation...', kname)
             return
+
         self._copy_kernel_config(kname=kname)
 
         key = 'boot/kernel/' + kname + '/extraversion'
@@ -1591,8 +1634,7 @@ class StageBase(TargetBase, ClearBase, GenBase):
         self._copy_initramfs_overlay(kname=kname)
 
         # Execute the script that builds the kernel
-        cmd([self.settings['controller_file'], 'kernel', kname],
-            env=self.env)
+        cmd([self.settings['controller_file'], 'kernel', kname], env=self.env)
 
         if "boot/kernel/" + kname + "/initramfs_overlay" in self.settings:
             log.notice('Cleaning up temporary overlay dir')
