@@ -119,7 +119,7 @@ case ${clst_hostarch} in
 			eval "distkernel=\$clst_boot_kernel_${x}_distkernel"
 
 			echo "menuentry 'Boot LiveCD (kernel: ${x})' --class gnu-linux --class os {"  >> ${iacfg}
-			if [ ${distkernel} = "yes" ]
+			if [ "${distkernel}" = "yes" ]
 			then
 				echo "	search --no-floppy --set=root -l 'ISOIMAGE'" >> ${iacfg}
 				echo "	linux ${kern_subdir}/${x} ${default_dracut_append_line[@]} ${cmdline_opts[@]}" >> ${iacfg}
@@ -130,7 +130,7 @@ case ${clst_hostarch} in
 			echo "}" >> ${iacfg}
 			echo "" >> ${iacfg}
 			echo "menuentry 'Boot LiveCD (kernel: ${x}) (cached)' --class gnu-linux --class os {"  >> ${iacfg}
-			if [ ${distkernel} = "yes" ]
+			if [ "${distkernel}" = "yes" ]
 			then
 				echo "	search --no-floppy --set=root -l 'ISOIMAGE'" >> ${iacfg}
 				echo "	linux ${kern_subdir}/${x} ${default_dracut_append_line[@]} rd.live.ram=1 ${cmdline_opts[@]}" >> ${iacfg}
@@ -146,7 +146,7 @@ case ${clst_hostarch} in
 				for y in ${kernel_console}
 				do
 					echo "menuentry 'Boot LiveCD (kernel: ${x} console=${y})' --class gnu-linux --class os {"  >> ${iacfg}
-					if [ ${distkernel} = "yes" ]
+					if [ "${distkernel}" = "yes" ]
 					then
 						echo "	search --no-floppy --set=root -l 'ISOIMAGE'" >> ${iacfg}
 						echo "	linux ${kern_subdir}/${x} ${default_dracut_append_line[@]} ${cmdline_opts[@]} console=${y} " >> ${iacfg}
