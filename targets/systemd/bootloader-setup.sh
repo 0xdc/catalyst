@@ -55,6 +55,8 @@ case ${clst_hostarch} in
 			echo "}" >> ${iacfg}
 			if [ -n "${kernel_console}" ]
 			then
+			echo 'serial --speed=115200' >> ${iacfg}
+			echo 'terminal_input --append serial; terminal_output --append serial' >> ${iacfg}
 			echo "submenu 'Special console options (kernel: ${x})' --class gnu-linux --class os {" >> ${iacfg}
 				for y in ${kernel_console}
 				do
