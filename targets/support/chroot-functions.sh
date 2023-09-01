@@ -304,6 +304,33 @@ split_usr() {
 	fi
 }
 
+distkmerge_get_image_path() {
+    case ${clst_hostarch} in
+        amd64|x86)
+            echo arch/x86/boot/bzImage
+            ;;
+        arm64)
+            if grep -qE '^CONFIG_EFI_ZBOOT=y$' /boot/config-${distkernel_version}; then
+              echo arch/arm64/boot/vmlinuz.efi
+            else
+              echo arch/arm64/boot/Image.gz
+            fi
+            ;;
+        arm)
+            echo arch/arm/boot/zImage
+            ;;
+        hppa|ppc|ppc64)
+            echo ./vmlinux
+            ;;
+        riscv)
+            echo arch/riscv/boot/Image.gz
+            ;;
+        *)
+            die "unsupported ARCH=${clst_hostarch}"
+            ;;
+    esac
+}
+
 readonly locales="
 C.UTF8 UTF-8
 "
