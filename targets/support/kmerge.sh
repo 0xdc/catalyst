@@ -181,6 +181,6 @@ if [[ -n ${clst_KERNCACHE} && ! ${cached_kernel_found} ]]; then
 fi
 
 if [[ ! ${cached_kernel_found} ]]; then
-	run_merge -C "${ksource}"
+	run_merge --deselect "${ksource}"
 	rm /usr/src/linux
 fi
