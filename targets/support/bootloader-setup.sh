@@ -24,8 +24,12 @@ then
 fi
 
 case ${clst_fstype} in
+	squashfs)
+		default_dracut_append_line+=(rd.live.dir=/ rd.live.squashimg=image.squashfs)
+		default_append_line+=(looptype=squashfs loop=/image.squashfs)
+	;;
 	jffs2)
-		default_append_line+=(looptype=jffs2 loop=/image.jffs2)
+		cmdline_opts+=(looptype=jffs2 loop=/image.jffs2)
 	;;
 esac
 
