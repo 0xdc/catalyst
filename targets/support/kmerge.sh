@@ -146,6 +146,7 @@ if [[ ${distkernel} = "yes" ]] ; then
   dracut "${DRACUT_ARGS[@]}" || exit 1
 
   # Create minkernel package to mimic genkernel's behaviour
+  cp -v "${distkernel_source_path}${distkernel_image_path}" /boot/vmlinuz-"${distkernel_version}"
   cd /boot
   tar jcvf /tmp/kerncache/${kname}-kernel-initrd-${clst_version_stamp}.tar.bz2 System.map* config* initramfs* vmlinuz*
   cd /
@@ -182,5 +183,6 @@ fi
 
 if [[ ! ${cached_kernel_found} ]]; then
 	run_merge --deselect "${ksource}"
-	rm /usr/src/linux
+	# This was breaking multi-kernel iso builds, probably not needed
+	# rm /usr/src/linux
 fi
