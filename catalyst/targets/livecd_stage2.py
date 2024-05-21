@@ -21,6 +21,7 @@ class livecd_stage2(StageBase):
         "livecd/readme",
         "livecd/type",
         "livecd/verify",
+        "livecd/volid",
         "repos",
     ])
 

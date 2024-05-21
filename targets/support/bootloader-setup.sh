@@ -12,7 +12,7 @@ extract_kernels $1/boot
 
 cmdline_opts=(mitigations=auto,nosmt)
 default_append_line=(cdroot)
-default_dracut_append_line=(root=live:CDLABEL=ISOIMAGE)
+default_dracut_append_line=(root=live:CDLABEL="${clst_iso_volume_id}")
 
 # Add any additional options
 if [ -n "${clst_livecd_bootargs}" ]

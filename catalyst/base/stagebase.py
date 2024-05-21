@@ -499,12 +499,12 @@ class StageBase(TargetBase, ClearBase, GenBase):
         if self.settings["spec_prefix"] + "/volid" in self.settings:
             self.settings["iso_volume_id"] = \
                 self.settings[self.settings["spec_prefix"] + "/volid"]
-            if len(self.settings["iso_volume_id"]) > 32:
-                raise CatalystError(
-                    "ISO volume ID must not exceed 32 characters.")
         else:
-            self.settings["iso_volume_id"] = "catalyst " + \
-                self.settings['snapshot_treeish']
+            self.settings["iso_volume_id"] = ("catalyst_" + \
+                self.settings['snapshot_treeish']).upper()
+        if len(self.settings["iso_volume_id"]) > 32:
+            raise CatalystError(
+                "ISO volume ID must not exceed 32 characters.")
 
     def set_default_action_sequence(self):
         """ Default action sequence for run method.
