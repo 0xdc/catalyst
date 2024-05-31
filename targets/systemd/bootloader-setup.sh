@@ -28,7 +28,7 @@ case ${clst_fstype} in
 esac
 
 
-default_append_line=(root=live:LABEL=${clst_iso_volume_id} ${cmdline_opts[@]})
+default_append_line=(root=live:CDLABEL=${clst_iso_volume_id} ${cmdline_opts[@]})
 
 case ${clst_hostarch} in
 	amd64|arm64|ia64|ppc*|powerpc*|sparc*|x86)
