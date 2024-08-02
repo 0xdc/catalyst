@@ -867,19 +867,37 @@ class StageBase(TargetBase, ClearBase, GenBase):
 
     def config_profile_link(self):
         log.info('Configuring profile link...')
-        make_profile = Path(self.settings['chroot_path'] + self.settings['port_conf'],
-                            'make.profile')
+
+        chroot_port_conf = Path(self.settings['chroot_path'] + self.settings['port_conf'])
+        make_profile = chroot_port_conf / 'make.profile'
         make_profile.unlink(missing_ok=True)
+
         try:
             repo_name, target_profile = self.settings['target_profile'].split(":", 1)
         except ValueError:
             repo_name = self.settings['repo_name']
             target_profile = self.settings['target_profile']
-        make_profile.symlink_to(Path('../..' + self.settings['repo_basedir'],
-                                     repo_name,
-                                     'profiles',
-                                     target_profile),
+
+        chroot_profile_path = Path(self.settings['chroot_path'] + self.settings['repo_basedir'],
+                                   repo_name,
+                                   'profiles',
+                                   target_profile)
+
+        make_profile.symlink_to(os.path.relpath(chroot_profile_path, chroot_port_conf),
                                 target_is_directory=True)
+
+        if self.settings['root_path'] != '/':
+            log.info('Configuring ROOT profile link...')
+
+            # stage_path is chroot_path + root_path
+            root_port_conf = Path(self.settings['stage_path'] + self.settings['port_conf'])
+            root_port_conf.mkdir(mode=0o755, parents=True, exist_ok=True)
+
+            root_make_profile = root_port_conf / 'make.profile'
+            root_make_profile.unlink(missing_ok=True)
+
+            root_make_profile.symlink_to(os.path.relpath(chroot_profile_path, root_port_conf),
+                                         target_is_directory=True)
 
     def setup_confdir(self):
         if "autoresume" in self.settings["options"] \
