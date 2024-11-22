@@ -11,13 +11,13 @@ source ${clst_shdir}/support/functions.sh
 #
 # Configuration parameters:
 # All sizes are in forms as understood by parted: use MiB, GiB, ... or M, G, ...
-#  - clst_qcow2_size      (internal) size of the qcow2 image (default 20GiB)
-#  - clst_qcow2_efisize   size of the EFI boot partition (default 512MiB)
-#  - clst_qcow2_roottype  type of the root partition (default xfs)
+#  - clst_diskimage_qcow2_size      (internal) size of the qcow2 image (default 20GiB)
+#  - clst_diskimage_qcow2_efisize   size of the EFI boot partition (default 512MiB)
+#  - clst_diskimage_qcow2_roottype  type of the root partition (default xfs)
 #
-: "${clst_qcow2_size:=20GiB}"
-: "${clst_qcow2_efisize:=512MiB}"
-: "${clst_qcow2_roottype:=xfs}"
+: "${clst_diskimage_qcow2_size:=20GiB}"
+: "${clst_diskimage_qcow2_efisize:=512MiB}"
+: "${clst_diskimage_qcow2_roottype:=xfs}"
 
 #
 # We only support one set of tools, based on
@@ -92,8 +92,8 @@ exec_in_qcow2() {
 }
 
 
-echo "Creating a new qcow2 disk image file ${myqcow2}.tmp.qcow2 with size ${clst_qcow2_size/%iB/}"
-qemu-img create -f qcow2 "${myqcow2}.tmp.qcow2" ${clst_qcow2_size/%iB/} || die "Cannot create qcow2 file"
+echo "Creating a new qcow2 disk image file ${myqcow2}.tmp.qcow2 with size ${clst_diskimage_qcow2_size/%iB/}"
+qemu-img create -f qcow2 "${myqcow2}.tmp.qcow2" ${clst_diskimage_qcow2_size/%iB/} || die "Cannot create qcow2 file"
 
 echo "Connecting the qcow2 file to network block device ${mydevice}"
 qemu-nbd -c ${mydevice} -f qcow2 "${myqcow2}.tmp.qcow2" || die "Cannot connect qcow2 file to nbd0"
@@ -102,14 +102,14 @@ echo "Creating a GPT disklabel"
 parted -s ${mydevice} mklabel gpt || qcow2die "Cannot create disklabel"
 
 echo "Creating an EFI boot partition"
-parted -s ${mydevice} -- mkpart gentooefi fat32 1M ${clst_qcow2_efisize} || qcow2die "Cannot create EFI partition"
+parted -s ${mydevice} -- mkpart gentooefi fat32 1M ${clst_diskimage_qcow2_efisize} || qcow2die "Cannot create EFI partition"
 # mark it as EFI boot partition
 parted -s ${mydevice} -- type 1 C12A7328-F81F-11D2-BA4B-00A0C93EC93B || qcow2die "Cannot set EFI partition UUID"
 # note down name
 mypartefi=${mydevice}p1
 
 echo "Creating the root partition"
-parted -s ${mydevice} -- mkpart gentooroot ${clst_qcow2_roottype} ${clst_qcow2_efisize}GiB -1M || qcow2die "Cannot create root partition"
+parted -s ${mydevice} -- mkpart gentooroot ${clst_diskimage_qcow2_roottype} ${clst_diskimage_qcow2_efisize}GiB -1M || qcow2die "Cannot create root partition"
 # mark it as generic linux filesystem partition
 parted -s ${mydevice} -- type 2 0FC63DAF-8483-4772-8E79-3D69D8477DE4 || qcow2die "Cannot set root partition UUID"
 # note down name
