@@ -124,8 +124,8 @@ parted -s ${mydevice} -- print || qcow2die "Printing the partition table failed"
 echo "Making a vfat filesystem in p1"
 mkfs.fat -v -F 32 -n gentooefi ${mypartefi} || qcow2die "Formatting EFI partition failed"
 
-echo "Making an xfs filesystem in p2"
-mkfs.xfs -L gentooroot ${mypartroot} || qcow2die "Formatting root partition failed"
+echo "Making an ${clst_diskimage_qcow2_roottype} filesystem in p2"
+mkfs.${clst_diskimage_qcow2_roottype} -L gentooroot ${mypartroot} || qcow2die "Formatting root partition failed"
 
 echo "Printing blkid output"
 blkid ${mydevice}* || qcow2die "blkid failed"
@@ -158,7 +158,7 @@ cat > "${mymountpoint}/etc/fstab" <<END
 #
 # <fs>                  <mountpoint>    <type>          <opts>          <dump/pass>
 
-LABEL=gentooroot            /               xfs              noatime,rw   0 1
+LABEL=gentooroot            /               ${clst_diskimage_qcow2_roottype}              noatime,rw   0 1
 LABEL=gentooefi             /boot           vfat             defaults     1 2
 
 END
