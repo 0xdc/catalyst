@@ -109,16 +109,20 @@ def file_locate(settings, filelist, expand=1):
             if not settings[myfile]:
                 raise CatalystError("File variable \"" + myfile +
                                     "\" has a length of zero (not specified.)", print_traceback=True)
-            if settings[myfile][0] == "/":
-                if not os.path.exists(settings[myfile]):
-                    raise CatalystError("Cannot locate specified " + myfile +
-                                        ": " + settings[myfile], print_traceback=False)
-            elif expand and os.path.exists(os.getcwd()+"/"+settings[myfile]):
-                settings[myfile] = os.getcwd()+"/"+settings[myfile]
+            if isinstance(settings[myfile], list):
+                for fpath in settings[myfile]:
+                    pass
             else:
-                raise CatalystError("Cannot locate specified " + myfile +
-                                    ": "+settings[myfile]+" (2nd try)" +
-                                    """
+                if settings[myfile][0] == "/":
+                    if not os.path.exists(settings[myfile]):
+                        raise CatalystError("Cannot locate specified " + myfile +
+                                            ": " + settings[myfile], print_traceback=False)
+                elif expand and os.path.exists(os.getcwd()+"/"+settings[myfile]):
+                    settings[myfile] = os.getcwd()+"/"+settings[myfile]
+                else:
+                    raise CatalystError("Cannot locate specified " + myfile +
+                                        ": "+settings[myfile]+" (2nd try)" +
+                                        """
 Spec file format:
 
 The spec file format is a very simple and easy-to-use format for storing data. Here's an example
@@ -138,7 +142,7 @@ that the order of multiple-value items is preserved, but the order that the item
 defined are not preserved. In other words, "foo", "bar", "oni" ordering is preserved but "item1"
 "item2" "item3" ordering is not, as the item strings are stored in a dictionary (hash).
 """,
-                                    print_traceback=True)
+                                        print_traceback=True)
 
 
 def read_makeconf(mymakeconffile):
