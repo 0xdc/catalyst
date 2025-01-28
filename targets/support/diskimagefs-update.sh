@@ -67,13 +67,23 @@ case ${clst_diskimage_type} in
 		configure_dhcp
 		;;
 	ssh)
-		echo "Setting up ssh log-in image, using key ${xxx}"
+		echo "Setting up ssh log-in image, using the following key"
+		echo "  ${clst_diskimage_sshkey}"
 		echo "Running systemd-firstboot"
 		systemd-firstboot --timezone=UTC || die "Failed running systemd-firstboot"
 		configure_dhcp
 		configure_sshd
 		echo "Adding sshd service"
-		systemctl enable sshd
+		systemctl enable sshd || die "Failed enabling sshd service"
+		;;
+	cloud-init|cloudinit)
+		echo "Setting up cloud-init image"
+		echo "Running systemd-firstboot"
+		systemd-firstboot --timezone=UTC || die "Failed running systemd-firstboot"
+		echo "Enabling cloud-init services"
+		for name in cloud-init-main cloud-init-local cloud-init-network cloud-config cloud-final ; do
+			systemctl enable ${name}.service || die "Failed enabling ${name}.service"
+		done
 		;;
 	*)
 		die "As yet unsupported image type"
