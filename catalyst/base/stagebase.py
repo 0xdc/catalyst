@@ -951,8 +951,11 @@ class StageBase(TargetBase, ClearBase, GenBase):
             # The trailing slashes on both paths are important:
             # We want to make sure rsync copies the dirs into each
             # other and not as subdirs.
-            cmd(['rsync', '-a', self.settings['portage_confdir'] + '/', dest + '/'],
-                env=self.env)
+            if isinstance(self.settings['portage_confdir'], str):
+                self.settings['portage_confdir'] = [self.settings['portage_confdir']]
+            for confdir in self.settings['portage_confdir']:
+                cmd(['rsync', '-a', confdir + '/', dest + '/'],
+                    env=self.env)
             self.resume.enable("setup_confdir")
 
     def to_chroot(self, path):
