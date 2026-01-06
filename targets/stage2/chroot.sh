@@ -13,3 +13,5 @@ ${clst_repo_basedir}/${clst_repo_name}/scripts/bootstrap.sh ${bootstrap_opts[@]}
 
 # Replace modified /etc/locale.gen with default
 etc-update --automode -5
+
+run_merge -1 sys-devel/gcc
