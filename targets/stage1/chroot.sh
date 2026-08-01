@@ -68,7 +68,7 @@ mkdir -p "$ROOT"
 run_merge --oneshot --nodeps sys-apps/baselayout
 sed -i "/USE=\"${USE} build\"/d" ${clst_make_conf}
 
-echo "$locales" > /etc/locale.gen
+echo "$locales" | tee /etc/locale.gen ${ROOT}/etc/locale.gen
 for etc in /etc "$ROOT"/etc; do
 	echo "LANG=C.UTF8" > ${etc}/env.d/02locale
 done
@@ -96,7 +96,7 @@ run_merge --implicit-system-deps=n --oneshot "${buildpkgs[@]}"
 # not run locale-gen when ROOT is set. Since we've set LANG, we need to run
 # locale-gen explicitly.
 if [ -x "$(command -v locale-gen)" ]; then
-	locale-gen --destdir "$ROOT"/ || die "locale-gen failed"
+	locale-gen --destdir "$ROOT"/ || locale-gen --root "$ROOT" || die "locale-gen failed"
 fi
 
 # Why are we removing these? Don't we need them for final make.conf?
